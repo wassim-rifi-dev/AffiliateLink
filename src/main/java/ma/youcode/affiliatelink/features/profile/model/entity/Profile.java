@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.features.profile.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ma.youcode.affiliatelink.features.profile.model.enums.ProfileStatus;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

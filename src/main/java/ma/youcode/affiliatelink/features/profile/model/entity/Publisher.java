@@ -2,10 +2,12 @@ package ma.youcode.affiliatelink.features.profile.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ma.youcode.affiliatelink.features.profile.model.enums.Niche;
 
 @Getter
 @Setter
+@SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
