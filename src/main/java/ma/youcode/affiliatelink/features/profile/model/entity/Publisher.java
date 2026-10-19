@@ -9,7 +9,7 @@ import ma.youcode.affiliatelink.features.profile.model.enums.Niche;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "profiles_publishers")
+@Table(name = "profile_publishers")
 @PrimaryKeyJoinColumn(name = "id")
 public class Publisher extends Profile {
     @Column(name = "first_name", nullable = false)

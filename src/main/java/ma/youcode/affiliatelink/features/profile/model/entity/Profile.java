@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "profiles")
+@Table(name = "profile_profiles")
 public abstract class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

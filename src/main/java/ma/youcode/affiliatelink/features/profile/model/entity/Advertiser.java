@@ -11,7 +11,7 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "profiles_advertisers")
+@Table(name = "profile_advertisers")
 @PrimaryKeyJoinColumn(name = "id")
 public class Advertiser extends Profile {
     @Column(name = "company_name", nullable = false, unique = true)
