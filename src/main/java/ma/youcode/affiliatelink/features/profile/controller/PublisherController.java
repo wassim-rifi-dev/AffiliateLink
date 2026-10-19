@@ -6,13 +6,11 @@ import ma.youcode.affiliatelink.features.profile.dto.request.CreatePublisherRequ
 import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.features.profile.service.PublisherService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/publishers")
@@ -31,5 +29,12 @@ public class PublisherController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PublisherResponseDTO>> getAllPublisher() {
+        List<PublisherResponseDTO> allPublishers = publisherService.getAllPublisher();
+
+        return ResponseEntity.ok(allPublishers);
     }
 }
