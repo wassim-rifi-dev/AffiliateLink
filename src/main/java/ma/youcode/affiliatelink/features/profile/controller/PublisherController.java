@@ -37,4 +37,11 @@ public class PublisherController {
 
         return ResponseEntity.ok(allPublishers);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PublisherResponseDTO> getPublisherById(@PathVariable("id") Long id) {
+        PublisherResponseDTO publisher = publisherService.getPublisherById(id);
+
+        return ResponseEntity.ok(publisher);
+    }
 }

@@ -3,6 +3,7 @@ package ma.youcode.affiliatelink.features.profile.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.features.profile.model.entity.Publisher;
@@ -65,5 +66,23 @@ public class PublisherService {
                 .toList();
 
         return allPublisher;
+    }
+
+    public PublisherResponseDTO getPublisherById(Long id) {
+        Publisher publisher = publisherRepository.findById(id)
+                .orElseThrow(() -> new ProfileNotExistException("Publisher not found with id: " + id));
+
+        return PublisherResponseDTO.builder()
+            .id(publisher.getId())
+            .email(publisher.getEmail())
+            .firstName(publisher.getFirstName())
+            .lastName(publisher.getLastName())
+            .niche(publisher.getNiche())
+            .bio(publisher.getBio())
+            .country(publisher.getCountry())
+            .status(publisher.getStatus())
+            .createdAt(publisher.getCreatedAt())
+            .build();
+
     }
 }
