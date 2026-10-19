@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.features.profile.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
@@ -11,12 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
-
-    public PublisherService(PublisherRepository publisherRepository) {
-        this.publisherRepository = publisherRepository;
-    }
 
     @Transactional
     public PublisherResponseDTO createPublisher(CreatePublisherRequestDTO dto) {
