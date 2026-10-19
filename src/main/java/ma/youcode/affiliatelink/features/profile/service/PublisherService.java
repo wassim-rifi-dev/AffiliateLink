@@ -40,7 +40,7 @@ public class PublisherService {
                 .lastName(createdPublisher.getLastName())
                 .niche(createdPublisher.getNiche())
                 .bio(createdPublisher.getBio())
-                .country(createdPublisher.getBio())
+                .country(createdPublisher.getCountry())
                 .status(createdPublisher.getStatus())
                 .createdAt(createdPublisher.getCreatedAt())
                 .build();
@@ -57,7 +57,7 @@ public class PublisherService {
                         .lastName(p.getLastName())
                         .niche(p.getNiche())
                         .bio(p.getBio())
-                        .country(p.getBio())
+                        .country(p.getCountry())
                         .status(p.getStatus())
                         .createdAt(p.getCreatedAt())
                         .build()
