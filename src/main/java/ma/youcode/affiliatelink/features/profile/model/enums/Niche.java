@@ -1,4 +1,4 @@
-package ma.youcode.affiliatelink.features.profile.modal.enums;
+package ma.youcode.affiliatelink.features.profile.model.enums;
 
 public enum Niche {
     BEAUTY,

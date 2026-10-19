@@ -1,12 +1,11 @@
-package ma.youcode.affiliatelink.features.profile.modal.entity;
+package ma.youcode.affiliatelink.features.profile.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import ma.youcode.affiliatelink.features.profile.modal.enums.Niche;
+import lombok.*;
+import ma.youcode.affiliatelink.features.profile.model.enums.Niche;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
