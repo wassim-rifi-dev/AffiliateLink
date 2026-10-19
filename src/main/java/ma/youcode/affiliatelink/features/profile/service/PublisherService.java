@@ -8,6 +8,8 @@ import ma.youcode.affiliatelink.features.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.features.profile.repository.PublisherRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PublisherService {
     private final PublisherRepository publisherRepository;
@@ -44,5 +46,26 @@ public class PublisherService {
                 .status(createdPublisher.getStatus())
                 .createdAt(createdPublisher.getCreatedAt())
                 .build();
+    }
+
+    public List<PublisherResponseDTO> getAllPublisher() {
+        List<Publisher> publishers = publisherRepository.findAll();
+
+        List<PublisherResponseDTO> allPublisher = publishers.stream()
+                .map(p -> PublisherResponseDTO.builder()
+                        .id(p.getId())
+                        .email(p.getEmail())
+                        .firstName(p.getFirstName())
+                        .lastName(p.getLastName())
+                        .niche(p.getNiche())
+                        .bio(p.getBio())
+                        .country(p.getBio())
+                        .status(p.getStatus())
+                        .createdAt(p.getCreatedAt())
+                        .build()
+                )
+                .toList();
+
+        return allPublisher;
     }
 }
