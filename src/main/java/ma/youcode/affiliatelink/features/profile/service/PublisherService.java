@@ -3,6 +3,7 @@ package ma.youcode.affiliatelink.features.profile.service;
 import jakarta.transaction.Transactional;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreatePublisherRequestDTO;
+import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.features.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.features.profile.repository.PublisherRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class PublisherService {
     }
 
     @Transactional
-    public Publisher createPublisher(CreatePublisherRequestDTO dto) {
+    public PublisherResponseDTO createPublisher(CreatePublisherRequestDTO dto) {
         if (publisherRepository.existsByEmail(dto.email())) {
             throw new EmailAlreadyExistsException("Email already existe.");
         }
@@ -30,6 +31,18 @@ public class PublisherService {
                 .country(dto.country())
                 .build();
 
-        return publisherRepository.save(publisher);
+        Publisher createdPublisher = publisherRepository.save(publisher);
+
+        return PublisherResponseDTO.builder()
+                .id(createdPublisher.getId())
+                .email(createdPublisher.getEmail())
+                .firstName(createdPublisher.getFirstName())
+                .lastName(createdPublisher.getLastName())
+                .niche(createdPublisher.getNiche())
+                .bio(createdPublisher.getBio())
+                .country(createdPublisher.getBio())
+                .status(createdPublisher.getStatus())
+                .createdAt(createdPublisher.getCreatedAt())
+                .build();
     }
 }
