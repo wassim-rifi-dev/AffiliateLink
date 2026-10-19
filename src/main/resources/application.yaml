@@ -6,3 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/affiliatelink_db
     username: affiliate
     password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
