@@ -37,4 +37,11 @@ public class AdvertiserController {
 
         return ResponseEntity.ok(advertisers);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AdvertiserResponseDTO> getAdvertiserById(@PathVariable Long id) {
+        AdvertiserResponseDTO response = advertiserService.getAdvertiserById(id);
+
+        return ResponseEntity.ok(response);
+    }
 }
