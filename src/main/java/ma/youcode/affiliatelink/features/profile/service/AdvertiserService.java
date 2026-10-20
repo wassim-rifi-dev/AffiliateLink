@@ -4,13 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreateAdvertiserRequestDTO;
-import ma.youcode.affiliatelink.features.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.features.profile.model.entity.Advertiser;
 import ma.youcode.affiliatelink.features.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.features.profile.repository.AdvertiserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -41,5 +42,22 @@ public class AdvertiserService {
                 .status(createdAdvertiser.getStatus())
                 .createdAt(createdAdvertiser.getCreatedAt())
                 .build();
+    }
+
+    public List<AdvertiserResponseDTO> getAllAdvertisers() {
+        List<Advertiser> advertisers = advertiserRepository.findAll();
+
+        return advertisers.stream()
+                .map(a -> AdvertiserResponseDTO.builder()
+                        .id(a.getId())
+                        .email(a.getEmail())
+                        .companyName(a.getCompanyName())
+                        .sector(a.getSector())
+                        .website(a.getWebsite())
+                        .status(a.getStatus())
+                        .createdAt(a.getCreatedAt())
+                        .build()
+                )
+                .toList();
     }
 }
