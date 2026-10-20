@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.AdvertiserResponseDTO;
-import ma.youcode.affiliatelink.features.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.features.profile.service.AdvertiserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +36,12 @@ public class AdvertiserController {
         List<AdvertiserResponseDTO> advertisers = advertiserService.getAllAdvertisers();
 
         return ResponseEntity.ok(advertisers);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AdvertiserResponseDTO> getAdvertiserById(@PathVariable Long id) {
+        AdvertiserResponseDTO response = advertiserService.getAdvertiserById(id);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -3,6 +3,7 @@ package ma.youcode.affiliatelink.features.profile.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.features.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.features.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.features.profile.model.entity.Advertiser;
@@ -57,5 +58,20 @@ public class AdvertiserService {
                         .build()
                 )
                 .toList();
+    }
+
+    public AdvertiserResponseDTO getAdvertiserById(Long id) {
+        Advertiser advertiser = advertiserRepository.findById(id)
+                .orElseThrow(() -> new ProfileNotExistException("Advertiser not found with id: " + id));
+
+        return AdvertiserResponseDTO.builder()
+                .id(advertiser.getId())
+                .email(advertiser.getEmail())
+                .companyName(advertiser.getCompanyName())
+                .sector(advertiser.getSector())
+                .website(advertiser.getWebsite())
+                .status(advertiser.getStatus())
+                .createdAt(advertiser.getCreatedAt())
+                .build();
     }
 }
