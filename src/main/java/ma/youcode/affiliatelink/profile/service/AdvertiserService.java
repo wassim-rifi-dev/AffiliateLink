@@ -7,10 +7,12 @@ import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.profile.model.entity.Advertiser;
+import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 import ma.youcode.affiliatelink.profile.repository.AdvertiserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -73,5 +75,15 @@ public class AdvertiserService {
                 .status(advertiser.getStatus())
                 .createdAt(advertiser.getCreatedAt())
                 .build();
+    }
+
+    public boolean isActiveAdvertiser(Long id) {
+        Optional<Advertiser> advertiser = advertiserRepository.findById(id);
+
+        if (advertiser.isEmpty() || advertiser.get().getStatus() != ProfileStatus.ACTIVE) {
+            return false;
+        }
+
+        return true;
     }
 }
