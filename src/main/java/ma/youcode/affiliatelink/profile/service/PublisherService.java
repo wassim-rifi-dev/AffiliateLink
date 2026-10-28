@@ -1,11 +1,12 @@
 package ma.youcode.affiliatelink.profile.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.PublisherResponseDTO;
+import ma.youcode.affiliatelink.profile.mapper.PublisherMapper;
 import ma.youcode.affiliatelink.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.profile.repository.PublisherRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
 
     @Transactional
     public PublisherResponseDTO createPublisher(CreatePublisherRequestDTO dto) {
@@ -23,66 +25,25 @@ public class PublisherService {
             throw new EmailAlreadyExistsException("Email already existe.");
         }
 
-        Publisher publisher = Publisher.builder()
-                .email(dto.email())
-                .firstName(dto.firstName())
-                .lastName(dto.lastName())
-                .niche(dto.niche())
-                .bio(dto.bio())
-                .country(dto.country())
-                .build();
+        Publisher publisher = publisherMapper.toEntity(dto);
 
         Publisher createdPublisher = publisherRepository.save(publisher);
 
-        return PublisherResponseDTO.builder()
-                .id(createdPublisher.getId())
-                .email(createdPublisher.getEmail())
-                .firstName(createdPublisher.getFirstName())
-                .lastName(createdPublisher.getLastName())
-                .niche(createdPublisher.getNiche())
-                .bio(createdPublisher.getBio())
-                .country(createdPublisher.getCountry())
-                .status(createdPublisher.getStatus())
-                .createdAt(createdPublisher.getCreatedAt())
-                .build();
+        return publisherMapper.toResponseDTO(createdPublisher);
     }
 
     public List<PublisherResponseDTO> getAllPublisher() {
         List<Publisher> publishers = publisherRepository.findAll();
 
-        List<PublisherResponseDTO> allPublisher = publishers.stream()
-                .map(p -> PublisherResponseDTO.builder()
-                        .id(p.getId())
-                        .email(p.getEmail())
-                        .firstName(p.getFirstName())
-                        .lastName(p.getLastName())
-                        .niche(p.getNiche())
-                        .bio(p.getBio())
-                        .country(p.getCountry())
-                        .status(p.getStatus())
-                        .createdAt(p.getCreatedAt())
-                        .build()
-                )
+        return publishers.stream()
+                .map(publisherMapper::toResponseDTO)
                 .toList();
-
-        return allPublisher;
     }
 
     public PublisherResponseDTO getPublisherById(Long id) {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new ProfileNotExistException("Publisher not found with id: " + id));
 
-        return PublisherResponseDTO.builder()
-            .id(publisher.getId())
-            .email(publisher.getEmail())
-            .firstName(publisher.getFirstName())
-            .lastName(publisher.getLastName())
-            .niche(publisher.getNiche())
-            .bio(publisher.getBio())
-            .country(publisher.getCountry())
-            .status(publisher.getStatus())
-            .createdAt(publisher.getCreatedAt())
-            .build();
-
+        return publisherMapper.toResponseDTO(publisher);
     }
 }

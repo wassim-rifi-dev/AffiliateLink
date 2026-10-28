@@ -1,10 +1,11 @@
 package ma.youcode.affiliatelink.profile.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.UpdateProfileStatusRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.ProfileStatusResponseDTO;
+import ma.youcode.affiliatelink.profile.mapper.ProfileMapper;
 import ma.youcode.affiliatelink.profile.model.entity.Profile;
 import ma.youcode.affiliatelink.profile.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final ProfileMapper profileMapper;
 
     @Transactional
     public ProfileStatusResponseDTO updateStatus(Long id, UpdateProfileStatusRequestDTO dto) {
@@ -22,11 +24,6 @@ public class ProfileService {
 
         profile.setStatus(dto.status());
 
-        return ProfileStatusResponseDTO.builder()
-                .id(profile.getId())
-                .email(profile.getEmail())
-                .status(profile.getStatus())
-                .createdAt(profile.getCreatedAt())
-                .build();
+        return profileMapper.toStatusResponseDTO(profile);
     }
 }

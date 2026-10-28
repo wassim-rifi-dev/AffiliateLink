@@ -3,7 +3,6 @@ package ma.youcode.affiliatelink.common;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
-import ma.youcode.affiliatelink.profile.service.AdvertiserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
