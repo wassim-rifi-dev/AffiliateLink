@@ -3,6 +3,7 @@ package ma.youcode.affiliatelink.profile.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -31,6 +32,16 @@ public abstract class Profile {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public void setStatus(ProfileStatus newStatus) {
+        if (this.status != null && !this.status.canTransitionTo(newStatus)) {
+            throw new InvalidStatusTransitionException(
+                    "Invalid status transition from " + this.status + " to " + newStatus
+            );
+        }
+
+        this.status = newStatus;
+    }
 
     @PrePersist
     protected void onCreate() {

@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.common;
 
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.service.AdvertiserService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,18 @@ public class GlobalExceptionHandler {
         );
 
         problem.setTitle("Email already exists");
+
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidStatusTransitionException.class)
+    public ProblemDetail handleInvalidStatusTransition(InvalidStatusTransitionException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+
+        problem.setTitle("Invalid status transition");
 
         return problem;
     }
