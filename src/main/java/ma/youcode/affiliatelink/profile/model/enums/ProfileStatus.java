@@ -5,7 +5,7 @@ public enum ProfileStatus {
     PENDING,
     SUSPENDED;
 
-    public boolean canTransitionTo(ProfileStatus target) {
+    public boolean changeStatus(ProfileStatus target) {
         return switch (this) {
             case PENDING -> target == ACTIVE;
             case ACTIVE -> target == SUSPENDED;
