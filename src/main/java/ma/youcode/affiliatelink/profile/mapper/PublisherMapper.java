@@ -3,33 +3,16 @@ package ma.youcode.affiliatelink.profile.mapper;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.profile.model.entity.Publisher;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class PublisherMapper {
+@Mapper(componentModel = "spring")
+public interface PublisherMapper {
 
-    public Publisher toEntity(CreatePublisherRequestDTO dto) {
-        return Publisher.builder()
-                .email(dto.email())
-                .firstName(dto.firstName())
-                .lastName(dto.lastName())
-                .niche(dto.niche())
-                .bio(dto.bio())
-                .country(dto.country())
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    Publisher toEntity(CreatePublisherRequestDTO dto);
 
-    public PublisherResponseDTO toResponseDTO(Publisher publisher) {
-        return PublisherResponseDTO.builder()
-                .id(publisher.getId())
-                .email(publisher.getEmail())
-                .firstName(publisher.getFirstName())
-                .lastName(publisher.getLastName())
-                .niche(publisher.getNiche())
-                .bio(publisher.getBio())
-                .country(publisher.getCountry())
-                .status(publisher.getStatus())
-                .createdAt(publisher.getCreatedAt())
-                .build();
-    }
+    PublisherResponseDTO toResponseDTO(Publisher publisher);
 }
