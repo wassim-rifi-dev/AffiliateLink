@@ -2,17 +2,10 @@ package ma.youcode.affiliatelink.profile.mapper;
 
 import ma.youcode.affiliatelink.profile.dto.response.ProfileStatusResponseDTO;
 import ma.youcode.affiliatelink.profile.model.entity.Profile;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class ProfileMapper {
+@Mapper(componentModel = "spring")
+public interface ProfileMapper {
 
-    public ProfileStatusResponseDTO toStatusResponseDTO(Profile profile) {
-        return ProfileStatusResponseDTO.builder()
-                .id(profile.getId())
-                .email(profile.getEmail())
-                .status(profile.getStatus())
-                .createdAt(profile.getCreatedAt())
-                .build();
-    }
+    ProfileStatusResponseDTO toStatusResponseDTO(Profile profile);
 }

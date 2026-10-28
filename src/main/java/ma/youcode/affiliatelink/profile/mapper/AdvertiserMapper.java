@@ -3,29 +3,16 @@ package ma.youcode.affiliatelink.profile.mapper;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.profile.model.entity.Advertiser;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class AdvertiserMapper {
+@Mapper(componentModel = "spring")
+public interface AdvertiserMapper {
 
-    public Advertiser toEntity(CreateAdvertiserRequestDTO dto) {
-        return Advertiser.builder()
-                .email(dto.email())
-                .companyName(dto.companyName())
-                .sector(dto.sector())
-                .website(dto.website())
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    Advertiser toEntity(CreateAdvertiserRequestDTO dto);
 
-    public AdvertiserResponseDTO toResponseDTO(Advertiser advertiser) {
-        return AdvertiserResponseDTO.builder()
-                .id(advertiser.getId())
-                .email(advertiser.getEmail())
-                .companyName(advertiser.getCompanyName())
-                .sector(advertiser.getSector())
-                .website(advertiser.getWebsite())
-                .status(advertiser.getStatus())
-                .createdAt(advertiser.getCreatedAt())
-                .build();
-    }
+    AdvertiserResponseDTO toResponseDTO(Advertiser advertiser);
 }
