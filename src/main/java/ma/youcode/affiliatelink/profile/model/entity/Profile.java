@@ -34,7 +34,7 @@ public abstract class Profile {
     private LocalDateTime createdAt;
 
     public void setStatus(ProfileStatus newStatus) {
-        if (this.status != null && !this.status.canTransitionTo(newStatus)) {
+        if (this.status != null && !this.status.changeStatus(newStatus)) {
             throw new InvalidStatusTransitionException(
                     "Invalid status transition from " + this.status + " to " + newStatus
             );
