@@ -1,7 +1,7 @@
 package ma.youcode.affiliatelink.profile.dto.response;
 
 import lombok.Builder;
-import ma.youcode.affiliatelink.profile.model.enums.Niche;
+import ma.youcode.affiliatelink.common.enums.Niche;
 import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 
 import java.time.LocalDateTime;

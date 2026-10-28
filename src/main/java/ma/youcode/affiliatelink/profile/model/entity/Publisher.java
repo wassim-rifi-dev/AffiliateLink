@@ -3,7 +3,7 @@ package ma.youcode.affiliatelink.profile.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import ma.youcode.affiliatelink.profile.model.enums.Niche;
+import ma.youcode.affiliatelink.common.enums.Niche;
 
 @Getter
 @Setter
