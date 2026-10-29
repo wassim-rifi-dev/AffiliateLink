@@ -49,6 +49,10 @@ public class AdvertiserService {
         return advertiserMapper.toResponseDTO(advertiser);
     }
 
+    public boolean advertiserExists(Long id) {
+        return advertiserRepository.existsById(id);
+    }
+
     public boolean isActiveAdvertiser(Long id) {
         Optional<Advertiser> advertiser = advertiserRepository.findById(id);
 

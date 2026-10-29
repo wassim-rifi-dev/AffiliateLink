@@ -1,0 +1,69 @@
+package ma.youcode.affiliatelink.offer.service;
+
+import lombok.AllArgsConstructor;
+import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
+import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
+import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
+import ma.youcode.affiliatelink.offer.mapper.OfferMapper;
+import ma.youcode.affiliatelink.offer.model.entity.Offer;
+import ma.youcode.affiliatelink.offer.model.entity.Tag;
+import ma.youcode.affiliatelink.offer.repository.OfferRepository;
+import ma.youcode.affiliatelink.offer.repository.TagRepository;
+import ma.youcode.affiliatelink.profile.ProfileApi;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@AllArgsConstructor
+public class OfferService {
+    private final OfferRepository offerRepository;
+    private final TagRepository tagRepository;
+    private final OfferMapper offerMapper;
+    private final ProfileApi profileApi;
+
+    @Transactional
+    public OfferResponseDTO createOffer(CreateOfferRequestDTO dto) {
+        if (!profileApi.advertiserExists(dto.advertiserId())) {
+            throw new ProfileNotExistException("Advertiser not found with id: " + dto.advertiserId());
+        }
+
+        if (!profileApi.isActiveAdvertiser(dto.advertiserId())) {
+            throw new BusinessRuleException("Advertiser must be active to create an offer");
+        }
+
+        Offer offer = new Offer(dto.advertiserId(), dto.title(), dto.description(), dto.landingUrl(), dto.niche());
+        offer.replaceTags(resolveTags(dto.tags()));
+
+        Offer createdOffer = offerRepository.save(offer);
+
+        return offerMapper.toResponseDTO(createdOffer);
+    }
+
+    private Set<Tag> resolveTags(Set<String> names) {
+        if (names == null || names.isEmpty()) {
+            return Set.of();
+        }
+
+        Set<String> normalizedNames = names.stream()
+                .map(Tag::normalize)
+                .collect(Collectors.toSet());
+
+        Set<Tag> tags = new HashSet<>(tagRepository.findByNameIn(normalizedNames));
+
+        Set<String> existingNames = tags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+
+        normalizedNames.stream()
+                .filter(name -> !existingNames.contains(name))
+                .map(name -> tagRepository.save(new Tag(name)))
+                .forEach(tags::add);
+
+        return tags;
+    }
+}

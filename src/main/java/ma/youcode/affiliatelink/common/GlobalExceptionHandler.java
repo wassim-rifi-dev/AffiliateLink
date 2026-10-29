@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
                 exception.getMessage()
         );
 
-        problem.setTitle("Email already exists");
+        problem.setTitle("Profile not found");
 
         return problem;
     }
