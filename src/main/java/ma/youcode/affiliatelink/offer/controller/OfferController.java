@@ -2,9 +2,15 @@ package ma.youcode.affiliatelink.offer.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ma.youcode.affiliatelink.common.enums.Niche;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
+import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
 import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
 import ma.youcode.affiliatelink.offer.service.OfferService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,5 +34,18 @@ public class OfferController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<PagedModel<OfferResponseDTO>> searchOffers(
+            @RequestParam(required = false) Niche niche,
+            @RequestParam(required = false) Long advertiserId,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String keyword,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        OfferSearchCriteria criteria = new OfferSearchCriteria(niche, advertiserId, tag, keyword);
+
+        return ResponseEntity.ok(new PagedModel<>(offerService.searchOffers(criteria, pageable)));
     }
 }

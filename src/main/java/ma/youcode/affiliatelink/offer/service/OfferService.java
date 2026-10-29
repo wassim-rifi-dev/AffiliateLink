@@ -4,17 +4,24 @@ import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
+import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
 import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
 import ma.youcode.affiliatelink.offer.mapper.OfferMapper;
 import ma.youcode.affiliatelink.offer.model.entity.Offer;
 import ma.youcode.affiliatelink.offer.model.entity.Tag;
 import ma.youcode.affiliatelink.offer.repository.OfferRepository;
+import ma.youcode.affiliatelink.offer.repository.OfferSpecifications;
 import ma.youcode.affiliatelink.offer.repository.TagRepository;
 import ma.youcode.affiliatelink.profile.ProfileApi;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +49,27 @@ public class OfferService {
         Offer createdOffer = offerRepository.save(offer);
 
         return offerMapper.toResponseDTO(createdOffer);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OfferResponseDTO> searchOffers(OfferSearchCriteria criteria, Pageable pageable) {
+        List<Specification<Offer>> specs = new ArrayList<>();
+
+        if (criteria.niche() != null) {
+            specs.add(OfferSpecifications.hasNiche(criteria.niche()));
+        }
+        if (criteria.advertiserId() != null) {
+            specs.add(OfferSpecifications.hasAdvertiser(criteria.advertiserId()));
+        }
+        if (criteria.tag() != null && !criteria.tag().isBlank()) {
+            specs.add(OfferSpecifications.hasTag(criteria.tag()));
+        }
+        if (criteria.keyword() != null && !criteria.keyword().isBlank()) {
+            specs.add(OfferSpecifications.titleContains(criteria.keyword()));
+        }
+
+        return offerRepository.findAll(Specification.allOf(specs), pageable)
+                .map(offerMapper::toResponseDTO);
     }
 
     private Set<Tag> resolveTags(Set<String> names) {
