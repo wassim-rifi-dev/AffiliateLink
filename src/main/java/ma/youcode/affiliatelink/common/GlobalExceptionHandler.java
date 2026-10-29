@@ -1,5 +1,6 @@
 package ma.youcode.affiliatelink.common;
 
+import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
@@ -43,6 +44,18 @@ public class GlobalExceptionHandler {
         );
 
         problem.setTitle("Invalid status transition");
+
+        return problem;
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ProblemDetail handleBusinessRule(BusinessRuleException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+
+        problem.setTitle("Business rule violation");
 
         return problem;
     }
