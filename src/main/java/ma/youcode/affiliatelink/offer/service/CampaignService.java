@@ -57,6 +57,12 @@ public class CampaignService {
         campaign.transitionTo(dto.status(), LocalDate.now());
     }
 
+    @Transactional
+    public void pauseActiveCampaignsOfAdvertiser(Long advertiserId) {
+        campaignRepository.findByOfferAdvertiserIdAndStatus(advertiserId, CampaignStatus.ACTIVE)
+                .forEach(Campaign::pause);
+    }
+
     @Transactional(readOnly = true)
     public Page<CampaignResponseDTO> getCampaigns(CampaignStatus status, Pageable pageable) {
         Page<Campaign> campaigns = (status == null)
