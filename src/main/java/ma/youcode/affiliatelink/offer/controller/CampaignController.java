@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.offer.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.offer.dto.request.UpdateCampaignStatusRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.response.CampaignResponseDTO;
 import ma.youcode.affiliatelink.offer.model.enums.CampaignStatus;
@@ -13,6 +14,7 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/campaigns")
 @RequiredArgsConstructor
@@ -24,6 +26,9 @@ public class CampaignController {
             @RequestParam(required = false) CampaignStatus status,
             @PageableDefault(sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        log.debug("GET /api/campaigns: status={}, page={}, size={}",
+                status, pageable.getPageNumber(), pageable.getPageSize());
+
         return ResponseEntity.ok(new PagedModel<>(campaignService.getCampaigns(status, pageable)));
     }
 
@@ -32,6 +37,8 @@ public class CampaignController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateCampaignStatusRequestDTO dto
     ) {
+        log.debug("PATCH /api/campaigns/{}/status: targetStatus={}", id, dto.status());
+
         campaignService.updateStatus(id, dto);
 
         return ResponseEntity.noContent().build();

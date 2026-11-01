@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.profile.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.profile.service.AdvertiserService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/advertisers")
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class AdvertiserController {
 
     @PostMapping
     public ResponseEntity<AdvertiserResponseDTO> createAdvertiser(@Valid @RequestBody CreateAdvertiserRequestDTO dto) {
+        log.debug("POST /api/advertisers");
+
         AdvertiserResponseDTO created = advertiserService.createAdvertiser(dto);
 
         URI uri = ServletUriComponentsBuilder
@@ -33,6 +37,8 @@ public class AdvertiserController {
 
     @GetMapping
     public ResponseEntity<List<AdvertiserResponseDTO>> getAllAdvertisers() {
+        log.debug("GET /api/advertisers");
+
         List<AdvertiserResponseDTO> advertisers = advertiserService.getAllAdvertisers();
 
         return ResponseEntity.ok(advertisers);
@@ -40,6 +46,8 @@ public class AdvertiserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AdvertiserResponseDTO> getAdvertiserById(@PathVariable Long id) {
+        log.debug("GET /api/advertisers/{}", id);
+
         AdvertiserResponseDTO response = advertiserService.getAdvertiserById(id);
 
         return ResponseEntity.ok(response);

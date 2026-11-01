@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.profile.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AdvertiserService {
@@ -30,6 +32,9 @@ public class AdvertiserService {
         Advertiser advertiser = advertiserMapper.toEntity(dto);
 
         Advertiser createdAdvertiser = advertiserRepository.save(advertiser);
+
+        log.info("Advertiser profile created: profileId={}, status={}",
+                createdAdvertiser.getId(), createdAdvertiser.getStatus());
 
         return advertiserMapper.toResponseDTO(createdAdvertiser);
     }

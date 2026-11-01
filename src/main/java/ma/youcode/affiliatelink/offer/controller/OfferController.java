@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.offer.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.common.enums.Niche;
 import ma.youcode.affiliatelink.offer.dto.request.CreateCampaignRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/offers")
 @RequiredArgsConstructor
@@ -30,6 +32,8 @@ public class OfferController {
 
     @PostMapping
     public ResponseEntity<OfferResponseDTO> createOffer(@Valid @RequestBody CreateOfferRequestDTO dto) {
+        log.debug("POST /api/offers: advertiserId={}, niche={}", dto.advertiserId(), dto.niche());
+
         OfferResponseDTO created = offerService.createOffer(dto);
 
         URI uri = ServletUriComponentsBuilder
@@ -49,13 +53,18 @@ public class OfferController {
             @RequestParam(required = false) String keyword,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        OfferSearchCriteria criteria = new OfferSearchCriteria(niche, advertiserId, tag, keyword);
+        log.debug("GET /api/offers: niche={}, advertiserId={}, tag={}, keyword={}, page={}, size={}",
+                niche, advertiserId, tag, keyword, pageable.getPageNumber(), pageable.getPageSize());
+
+        OfferSearchCriteria criteria =new OfferSearchCriteria(niche, advertiserId, tag, keyword);
 
         return ResponseEntity.ok(new PagedModel<>(offerService.searchOffers(criteria, pageable)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<OfferResponseDTO> getOfferById(@PathVariable Long id) {
+        log.debug("GET /api/offers/{}", id);
+
         OfferResponseDTO response = offerService.getOfferById(id);
 
         return ResponseEntity.ok(response);
@@ -66,6 +75,8 @@ public class OfferController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateOfferRequestDTO dto
     ) {
+        log.debug("PUT /api/offers/{}", id);
+
         OfferResponseDTO updated = offerService.updateOffer(id, dto);
 
         return ResponseEntity.ok(updated);
@@ -76,6 +87,8 @@ public class OfferController {
             @PathVariable Long id,
             @Valid @RequestBody CreateCampaignRequestDTO dto
     ) {
+        log.debug("POST /api/offers/{}/campaigns: payoutModel={}", id, dto.payoutModel());
+
         CampaignResponseDTO created = campaignService.createCampaign(id, dto);
 
         URI uri = ServletUriComponentsBuilder

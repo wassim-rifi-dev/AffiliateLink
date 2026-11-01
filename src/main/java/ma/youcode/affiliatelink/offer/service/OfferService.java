@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.offer.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
 import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OfferService {
@@ -38,10 +40,12 @@ public class OfferService {
     @Transactional
     public OfferResponseDTO createOffer(CreateOfferRequestDTO dto) {
         if (!profileApi.advertiserExists(dto.advertiserId())) {
+            log.warn("Offer creation rejected: advertiser not found, advertiserId={}", dto.advertiserId());
             throw new ProfileNotExistException("Advertiser not found with id: " + dto.advertiserId());
         }
 
         if (!profileApi.isActiveAdvertiser(dto.advertiserId())) {
+            log.warn("Offer creation rejected: advertiser not active, advertiserId={}", dto.advertiserId());
             throw new BusinessRuleException("Advertiser must be active to create an offer");
         }
 
@@ -49,6 +53,8 @@ public class OfferService {
         offer.replaceTags(resolveTags(dto.tags()));
 
         Offer createdOffer = offerRepository.save(offer);
+
+        log.info("Offer created: offerId={}, advertiserId={}", createdOffer.getId(), createdOffer.getAdvertiserId());
 
         return offerMapper.toResponseDTO(createdOffer);
     }
@@ -71,11 +77,17 @@ public class OfferService {
 
         Offer updatedOffer = offerRepository.save(offer);
 
+        log.info("Offer updated: offerId={}", updatedOffer.getId());
+
         return offerMapper.toResponseDTO(updatedOffer);
     }
 
     @Transactional(readOnly = true)
     public Page<OfferResponseDTO> searchOffers(OfferSearchCriteria criteria, Pageable pageable) {
+        log.debug("Searching offers: niche={}, advertiserId={}, tag={}, keyword={}, page={}, size={}, sort={}",
+                criteria.niche(), criteria.advertiserId(), criteria.tag(), criteria.keyword(),
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+
         List<Specification<Offer>> specs = new ArrayList<>();
 
         if (criteria.niche() != null) {
