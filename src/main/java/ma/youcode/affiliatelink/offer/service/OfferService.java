@@ -6,6 +6,7 @@ import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
+import ma.youcode.affiliatelink.offer.dto.request.UpdateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
 import ma.youcode.affiliatelink.offer.mapper.OfferMapper;
 import ma.youcode.affiliatelink.offer.model.entity.Offer;
@@ -58,6 +59,19 @@ public class OfferService {
                 .orElseThrow(() -> new OfferNotFoundException("Offer not found with id: " + id));
 
         return offerMapper.toResponseDTO(offer);
+    }
+
+    @Transactional
+    public OfferResponseDTO updateOffer(Long id, UpdateOfferRequestDTO dto) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFoundException("Offer not found with id: " + id));
+
+        offer.update(dto.title(), dto.description(), dto.landingUrl(), dto.niche());
+        offer.replaceTags(resolveTags(dto.tags()));
+
+        Offer updatedOffer = offerRepository.save(offer);
+
+        return offerMapper.toResponseDTO(updatedOffer);
     }
 
     @Transactional(readOnly = true)

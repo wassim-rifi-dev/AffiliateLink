@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import ma.youcode.affiliatelink.common.enums.Niche;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
+import ma.youcode.affiliatelink.offer.dto.request.UpdateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
 import ma.youcode.affiliatelink.offer.service.OfferService;
 import org.springframework.data.domain.Pageable;
@@ -54,5 +55,15 @@ public class OfferController {
         OfferResponseDTO response = offerService.getOfferById(id);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OfferResponseDTO> updateOffer(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateOfferRequestDTO dto
+    ) {
+        OfferResponseDTO updated = offerService.updateOffer(id, dto);
+
+        return ResponseEntity.ok(updated);
     }
 }
