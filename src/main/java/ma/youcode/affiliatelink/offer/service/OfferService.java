@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.offer.service;
 
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
+import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
@@ -49,6 +50,14 @@ public class OfferService {
         Offer createdOffer = offerRepository.save(offer);
 
         return offerMapper.toResponseDTO(createdOffer);
+    }
+
+    @Transactional(readOnly = true)
+    public OfferResponseDTO getOfferById(Long id) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFoundException("Offer not found with id: " + id));
+
+        return offerMapper.toResponseDTO(offer);
     }
 
     @Transactional(readOnly = true)

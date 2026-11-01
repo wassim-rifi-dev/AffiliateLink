@@ -48,4 +48,11 @@ public class OfferController {
 
         return ResponseEntity.ok(new PagedModel<>(offerService.searchOffers(criteria, pageable)));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OfferResponseDTO> getOfferById(@PathVariable Long id) {
+        OfferResponseDTO response = offerService.getOfferById(id);
+
+        return ResponseEntity.ok(response);
+    }
 }

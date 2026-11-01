@@ -3,6 +3,7 @@ package ma.youcode.affiliatelink.common;
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
+import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,18 @@ public class GlobalExceptionHandler {
         );
 
         problem.setTitle("Profile not found");
+
+        return problem;
+    }
+
+    @ExceptionHandler(OfferNotFoundException.class)
+    public ProblemDetail handleOfferNotFound(OfferNotFoundException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        problem.setTitle("Offer not found");
 
         return problem;
     }
