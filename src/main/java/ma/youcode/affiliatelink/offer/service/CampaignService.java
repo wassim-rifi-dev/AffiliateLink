@@ -8,9 +8,12 @@ import ma.youcode.affiliatelink.offer.dto.response.CampaignResponseDTO;
 import ma.youcode.affiliatelink.offer.mapper.CampaignMapper;
 import ma.youcode.affiliatelink.offer.model.entity.Campaign;
 import ma.youcode.affiliatelink.offer.model.entity.Offer;
+import ma.youcode.affiliatelink.offer.model.enums.CampaignStatus;
 import ma.youcode.affiliatelink.offer.repository.CampaignRepository;
 import ma.youcode.affiliatelink.offer.repository.OfferRepository;
 import ma.youcode.affiliatelink.profile.ProfileApi;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +43,14 @@ public class CampaignService {
         Campaign createdCampaign = campaignRepository.save(campaign);
 
         return campaignMapper.toResponseDTO(createdCampaign);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CampaignResponseDTO> getCampaigns(CampaignStatus status, Pageable pageable) {
+        Page<Campaign> campaigns = (status == null)
+                ? campaignRepository.findAll(pageable)
+                : campaignRepository.findByStatus(status, pageable);
+
+        return campaigns.map(campaignMapper::toResponseDTO);
     }
 }
