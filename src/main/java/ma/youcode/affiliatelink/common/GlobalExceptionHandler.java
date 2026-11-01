@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.common;
 
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
+import ma.youcode.affiliatelink.common.exception.CampaignNotFoundException;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
@@ -47,6 +48,18 @@ public class GlobalExceptionHandler {
         );
 
         problem.setTitle("Offer not found");
+
+        return problem;
+    }
+
+    @ExceptionHandler(CampaignNotFoundException.class)
+    public ProblemDetail handleCampaignNotFound(CampaignNotFoundException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        problem.setTitle("Campaign not found");
 
         return problem;
     }

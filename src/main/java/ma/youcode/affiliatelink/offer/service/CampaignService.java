@@ -2,8 +2,10 @@ package ma.youcode.affiliatelink.offer.service;
 
 import lombok.AllArgsConstructor;
 import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
+import ma.youcode.affiliatelink.common.exception.CampaignNotFoundException;
 import ma.youcode.affiliatelink.common.exception.OfferNotFoundException;
 import ma.youcode.affiliatelink.offer.dto.request.CreateCampaignRequestDTO;
+import ma.youcode.affiliatelink.offer.dto.request.UpdateCampaignStatusRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.response.CampaignResponseDTO;
 import ma.youcode.affiliatelink.offer.mapper.CampaignMapper;
 import ma.youcode.affiliatelink.offer.model.entity.Campaign;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @AllArgsConstructor
@@ -43,6 +47,14 @@ public class CampaignService {
         Campaign createdCampaign = campaignRepository.save(campaign);
 
         return campaignMapper.toResponseDTO(createdCampaign);
+    }
+
+    @Transactional
+    public void updateStatus(Long id, UpdateCampaignStatusRequestDTO dto) {
+        Campaign campaign = campaignRepository.findById(id)
+                .orElseThrow(() -> new CampaignNotFoundException("Campaign not found with id: " + id));
+
+        campaign.transitionTo(dto.status(), LocalDate.now());
     }
 
     @Transactional(readOnly = true)
