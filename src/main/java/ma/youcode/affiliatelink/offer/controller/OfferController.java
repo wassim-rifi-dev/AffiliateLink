@@ -3,10 +3,13 @@ package ma.youcode.affiliatelink.offer.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.youcode.affiliatelink.common.enums.Niche;
+import ma.youcode.affiliatelink.offer.dto.request.CreateCampaignRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.CreateOfferRequestDTO;
 import ma.youcode.affiliatelink.offer.dto.request.OfferSearchCriteria;
 import ma.youcode.affiliatelink.offer.dto.request.UpdateOfferRequestDTO;
+import ma.youcode.affiliatelink.offer.dto.response.CampaignResponseDTO;
 import ma.youcode.affiliatelink.offer.dto.response.OfferResponseDTO;
+import ma.youcode.affiliatelink.offer.service.CampaignService;
 import ma.youcode.affiliatelink.offer.service.OfferService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,6 +26,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class OfferController {
     private final OfferService offerService;
+    private final CampaignService campaignService;
 
     @PostMapping
     public ResponseEntity<OfferResponseDTO> createOffer(@Valid @RequestBody CreateOfferRequestDTO dto) {
@@ -65,5 +69,21 @@ public class OfferController {
         OfferResponseDTO updated = offerService.updateOffer(id, dto);
 
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/{id}/campaigns")
+    public ResponseEntity<CampaignResponseDTO> createCampaign(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateCampaignRequestDTO dto
+    ) {
+        CampaignResponseDTO created = campaignService.createCampaign(id, dto);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/campaigns/{id}")
+                .buildAndExpand(created.id())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(created);
     }
 }
