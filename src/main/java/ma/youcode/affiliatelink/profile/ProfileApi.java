@@ -11,6 +11,10 @@ public class ProfileApi {
         this.advertiserService = advertiserService;
     }
 
+    public boolean advertiserExists(Long id) {
+        return advertiserService.advertiserExists(id);
+    }
+
     public boolean isActiveAdvertiser(Long id) {
         return advertiserService.isActiveAdvertiser(id);
     }

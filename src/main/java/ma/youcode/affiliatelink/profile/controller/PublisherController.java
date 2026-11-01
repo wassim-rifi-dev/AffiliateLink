@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.profile.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.profile.service.PublisherService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/publishers")
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class PublisherController {
 
     @PostMapping
     public ResponseEntity<PublisherResponseDTO> createPublisher(@Valid @RequestBody CreatePublisherRequestDTO dto) {
+        log.debug("POST /api/publishers");
+
         PublisherResponseDTO created = publisherService.createPublisher(dto);
 
         URI uri = ServletUriComponentsBuilder
@@ -33,6 +37,8 @@ public class PublisherController {
 
     @GetMapping
     public ResponseEntity<List<PublisherResponseDTO>> getAllPublisher() {
+        log.debug("GET /api/publishers");
+
         List<PublisherResponseDTO> allPublishers = publisherService.getAllPublisher();
 
         return ResponseEntity.ok(allPublishers);
@@ -40,6 +46,8 @@ public class PublisherController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PublisherResponseDTO> getPublisherById(@PathVariable("id") Long id) {
+        log.debug("GET /api/publishers/{}", id);
+
         PublisherResponseDTO publisher = publisherService.getPublisherById(id);
 
         return ResponseEntity.ok(publisher);

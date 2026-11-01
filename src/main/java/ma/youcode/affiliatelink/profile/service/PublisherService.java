@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.profile.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PublisherService {
@@ -28,6 +30,9 @@ public class PublisherService {
         Publisher publisher = publisherMapper.toEntity(dto);
 
         Publisher createdPublisher = publisherRepository.save(publisher);
+
+        log.info("Publisher profile created: profileId={}, status={}",
+                createdPublisher.getId(), createdPublisher.getStatus());
 
         return publisherMapper.toResponseDTO(createdPublisher);
     }

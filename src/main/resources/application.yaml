@@ -10,3 +10,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+logging:
+  file:
+    name: logs/affiliatelink.log
+  level:
+    root: INFO
+    ma.youcode.affiliatelink: DEBUG
+    # Spring logs rejected field values (e.g. emails) at WARN here; GlobalExceptionHandler logs these cases without data.
+    org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver: ERROR
