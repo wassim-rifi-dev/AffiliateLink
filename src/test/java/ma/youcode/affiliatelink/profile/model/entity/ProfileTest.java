@@ -23,4 +23,24 @@ class ProfileTest {
 
         assertEquals(ProfileStatus.PENDING, advertiser.getStatus());
     }
+
+    @Test
+    @DisplayName("Un publisher changer sont status a Active")
+    void  shouldSetPublisherStatusToActiveWhenActivated() {
+        Publisher publisher = new Publisher();
+
+        publisher.setStatus(ProfileStatus.ACTIVE);
+
+        assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
+    }
+
+    @Test
+    @DisplayName("Un advertiser changer sont status a Active")
+    void  shouldSetAdvertiserStatusToActiveWhenActivated() {
+        Advertiser advertiser = new Advertiser();
+
+        advertiser.setStatus(ProfileStatus.ACTIVE);
+
+        assertEquals(ProfileStatus.ACTIVE, advertiser.getStatus());
+    }
 }
