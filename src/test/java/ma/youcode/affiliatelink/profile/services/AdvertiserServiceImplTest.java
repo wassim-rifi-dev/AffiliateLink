@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.never;
@@ -173,5 +174,38 @@ public class AdvertiserServiceImplTest {
         // Verify
         verify(advertiserRepository).findAll();
         verify(advertiserMapper, never()).toResponseDTO(advertiser);
+    }
+
+    @Test
+    void getAdvertiserById_shouldReturnResponseDTO_whenAdvertiserExists() {
+
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = new Advertiser();
+
+        AdvertiserResponseDTO responseDTO = AdvertiserResponseDTO.builder()
+                .id(id)
+                .email("test@email.com")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .companyName("Test Company")
+                .sector("Technology")
+                .website("https://test.com")
+                .build();
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.of(advertiser));
+        when(advertiserMapper.toResponseDTO(advertiser)).thenReturn(responseDTO);
+
+        // Act
+        AdvertiserResponseDTO result = advertiserService.getAdvertiserById(id);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+        verify(advertiserMapper).toResponseDTO(advertiser);
     }
 }
