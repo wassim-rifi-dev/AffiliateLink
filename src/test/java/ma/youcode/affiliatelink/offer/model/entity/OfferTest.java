@@ -162,6 +162,20 @@ public class OfferTest {
         assertEquals(CampaignStatus.DRAFT, campaign.getStatus());
     }
 
+    @Test
+    void getCampaigns_shouldReturnUnmodifiableList() {
+
+        // Arrange
+        Offer offer = newOffer();
+        List<Campaign> campaigns = offer.getCampaigns();
+
+        // Act & Assert
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> campaigns.add(newCampaign("Campaign A"))
+        );
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
