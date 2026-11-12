@@ -63,6 +63,20 @@ public class OfferTest {
         assertEquals(1L, offer.getAdvertiserId());
     }
 
+    @Test
+    void replaceTags_shouldClearAndAddNewTags() {
+
+        // Arrange
+        Offer offer = newOffer();
+        offer.replaceTags(Set.of(new Tag("old")));
+
+        // Act
+        offer.replaceTags(Set.of(new Tag("java"), new Tag("spring")));
+
+        // Assert
+        assertEquals(Set.of(new Tag("java"), new Tag("spring")), offer.getTags());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
