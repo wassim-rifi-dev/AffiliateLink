@@ -240,8 +240,6 @@ public class AdvertiserServiceImplTest {
         // Arrange
         Long id = 1L;
 
-        Advertiser advertiser = new Advertiser();
-
         when(advertiserRepository.existsById(id)).thenReturn(true);
 
         // Act
@@ -249,6 +247,23 @@ public class AdvertiserServiceImplTest {
 
         // Assert
         assertTrue(result);
+
+        // Verify
+        verify(advertiserRepository).existsById(id);
+    }
+
+    @Test
+    void advertiserExists_shouldReturnFalse_whenRepositoryReturnsFalse() {
+        // Arrange
+        Long id = 1L;
+
+        when(advertiserRepository.existsById(id)).thenReturn(false);
+
+        // Act
+        boolean result = advertiserService.advertiserExists(id);
+
+        // Assert
+        assertFalse(result);
 
         // Verify
         verify(advertiserRepository).existsById(id);
