@@ -1,5 +1,6 @@
 package ma.youcode.affiliatelink.profile.services;
 
+import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.profile.mapper.AdvertiserMapper;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,5 +73,37 @@ public class AdvertiserServiceImplTest {
         verify(advertiserMapper).toEntity(requestDTO);
         verify(advertiserRepository).save(advertiser);
         verify(advertiserMapper).toResponseDTO(advertiser);
+    }
+
+    @Test
+    void createAdvertiser_shouldThrowEmailAlreadyExistsException_whenEmailExists() {
+
+        // Arrange
+        CreateAdvertiserRequestDTO requestDTO = new CreateAdvertiserRequestDTO(
+                "test@email.com",
+                "test",
+                "Technology",
+                "https://test.com"
+        );
+
+        Advertiser advertiser = new Advertiser();
+
+        when(advertiserRepository.existsByEmail(requestDTO.email())).thenReturn(true);
+
+        // Act
+        EmailAlreadyExistsException exception = assertThrows(
+                EmailAlreadyExistsException.class,
+                () -> advertiserService.createAdvertiser(requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Email already existe.", exception.getMessage());
+
+        // Verify
+        verify(advertiserRepository).existsByEmail(requestDTO.email());
+        verify(advertiserMapper, never()).toEntity(requestDTO);
+        verify(advertiserRepository, never()).save(advertiser);
+        verify(advertiserMapper, never()).toResponseDTO(advertiser);
     }
 }
