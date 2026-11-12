@@ -46,6 +46,23 @@ public class OfferTest {
         assertNotNull(offer.getCreatedAt());
     }
 
+    @Test
+    void update_shouldReplaceAllFields() {
+
+        // Arrange
+        Offer offer = newOffer();
+
+        // Act
+        offer.update("Winter Sale", "New description", "https://new-shop.com", Niche.GAMING);
+
+        // Assert
+        assertEquals("Winter Sale", offer.getTitle());
+        assertEquals("New description", offer.getDescription());
+        assertEquals("https://new-shop.com", offer.getLandingUrl());
+        assertEquals(Niche.GAMING, offer.getNiche());
+        assertEquals(1L, offer.getAdvertiserId());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
