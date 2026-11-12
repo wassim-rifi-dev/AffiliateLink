@@ -79,4 +79,31 @@ public class ProfileEntityTest {
         // Assert
         assertEquals(ProfileStatus.SUSPENDED, publisher.getStatus());
     }
+
+    @Test
+    void onCreate_shouldSetDefaults_whenStatusAndCreatedAtAreNull() {
+
+        // Arrange
+        TestPublisher publisher = new TestPublisher(Publisher.builder());
+        assertNull(publisher.getStatus());
+        assertNull(publisher.getCreatedAt());
+
+        // Act
+        publisher.callOnCreate();
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, publisher.getStatus());
+        assertNotNull(publisher.getCreatedAt());
+    }
+
+    // onCreate() is protected: this subclass exposes it to the test
+    private static class TestPublisher extends Publisher {
+        TestPublisher(PublisherBuilder<?, ?> builder) {
+            super(builder);
+        }
+
+        void callOnCreate() {
+            onCreate();
+        }
+    }
 }
