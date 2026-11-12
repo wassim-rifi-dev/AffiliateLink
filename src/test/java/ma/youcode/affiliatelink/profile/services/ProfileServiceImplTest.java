@@ -127,4 +127,48 @@ public class ProfileServiceImplTest {
         verify(eventPublisher).publishEvent(new AdvertiserSuspended(id));
         verify(profileMapper).toStatusResponseDTO(advertiser);
     }
+
+    @Test
+    void updateStatus_shouldNotPublishEvent_whenPublisherIsSuspended() {
+
+        // Arrange
+        Long id = 1L;
+
+        Publisher publisher = Publisher.builder()
+                .id(id)
+                .email("test@email.com")
+                .firstName("John")
+                .lastName("Doe")
+                .niche(Niche.TECH)
+                .bio("Tech content creator")
+                .country("Morocco")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.SUSPENDED);
+
+        ProfileStatusResponseDTO responseDTO = ProfileStatusResponseDTO.builder()
+                .id(id)
+                .email("test@email.com")
+                .status(ProfileStatus.SUSPENDED)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(profileRepository.findById(id)).thenReturn(Optional.of(publisher));
+        when(profileMapper.toStatusResponseDTO(publisher)).thenReturn(responseDTO);
+
+        // Act
+        ProfileStatusResponseDTO result = profileService.updateStatus(id, requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+        assertEquals(ProfileStatus.SUSPENDED, publisher.getStatus());
+
+        // Verify
+        verify(profileRepository).findById(id);
+        verifyNoInteractions(eventPublisher);
+        verify(profileMapper).toStatusResponseDTO(publisher);
+    }
 }
