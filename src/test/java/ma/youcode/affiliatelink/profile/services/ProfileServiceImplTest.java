@@ -239,4 +239,43 @@ public class ProfileServiceImplTest {
         verifyNoInteractions(eventPublisher);
         verify(profileMapper, never()).toStatusResponseDTO(any());
     }
+
+    @Test
+    void updateStatus_shouldThrowInvalidStatusTransitionException_whenTransitionNotAllowed() {
+
+        // Arrange
+        Long id = 1L;
+
+        Publisher publisher = Publisher.builder()
+                .id(id)
+                .email("test@email.com")
+                .firstName("John")
+                .lastName("Doe")
+                .niche(Niche.TECH)
+                .bio("Tech content creator")
+                .country("Morocco")
+                .status(ProfileStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.SUSPENDED);
+
+        when(profileRepository.findById(id)).thenReturn(Optional.of(publisher));
+
+        // Act
+        InvalidStatusTransitionException exception = assertThrows(
+                InvalidStatusTransitionException.class,
+                () -> profileService.updateStatus(id, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Invalid status transition from PENDING to SUSPENDED", exception.getMessage());
+        assertEquals(ProfileStatus.PENDING, publisher.getStatus());
+
+        // Verify
+        verify(profileRepository).findById(id);
+        verifyNoInteractions(eventPublisher);
+        verify(profileMapper, never()).toStatusResponseDTO(any());
+    }
 }
