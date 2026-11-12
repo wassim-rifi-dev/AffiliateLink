@@ -142,6 +142,26 @@ public class OfferTest {
         assertEquals(CampaignStatus.ACTIVE, second.getStatus());
     }
 
+    @Test
+    void activateCampaign_shouldThrow_whenCampaignBelongsToAnotherOffer() {
+
+        // Arrange
+        Offer offer = newOffer();
+        Offer otherOffer = newOffer();
+        Campaign campaign = newCampaign("Campaign A");
+        otherOffer.addCampaign(campaign);
+
+        // Act
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
+                () -> offer.activateCampaign(campaign, TODAY)
+        );
+
+        // Assert
+        assertEquals("The campaign does not belong to this offer", exception.getMessage());
+        assertEquals(CampaignStatus.DRAFT, campaign.getStatus());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
