@@ -171,4 +171,46 @@ public class ProfileServiceImplTest {
         verifyNoInteractions(eventPublisher);
         verify(profileMapper).toStatusResponseDTO(publisher);
     }
+
+    @Test
+    void updateStatus_shouldNotPublishEvent_whenAdvertiserIsActivated() {
+
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = Advertiser.builder()
+                .id(id)
+                .companyName("test")
+                .sector("Technology")
+                .website("https://test.com")
+                .email("test@email.com")
+                .status(ProfileStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE);
+
+        ProfileStatusResponseDTO responseDTO = ProfileStatusResponseDTO.builder()
+                .id(id)
+                .email("test@email.com")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(profileRepository.findById(id)).thenReturn(Optional.of(advertiser));
+        when(profileMapper.toStatusResponseDTO(advertiser)).thenReturn(responseDTO);
+
+        // Act
+        ProfileStatusResponseDTO result = profileService.updateStatus(id, requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+        assertEquals(ProfileStatus.ACTIVE, advertiser.getStatus());
+
+        // Verify
+        verify(profileRepository).findById(id);
+        verifyNoInteractions(eventPublisher);
+        verify(profileMapper).toStatusResponseDTO(advertiser);
+    }
 }
