@@ -154,4 +154,24 @@ public class AdvertiserServiceImplTest {
         verify(advertiserMapper).toResponseDTO(advertiser1);
         verify(advertiserMapper).toResponseDTO(advertiser2);
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturnEmptyList_whenNoAdvertisers() {
+
+        // Arrange
+        Advertiser advertiser = new Advertiser();
+
+        when(advertiserRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<AdvertiserResponseDTO> result = advertiserService.getAllAdvertisers();
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify
+        verify(advertiserRepository).findAll();
+        verify(advertiserMapper, never()).toResponseDTO(advertiser);
+    }
 }
