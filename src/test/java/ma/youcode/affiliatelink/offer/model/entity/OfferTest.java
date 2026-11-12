@@ -108,6 +108,21 @@ public class OfferTest {
         assertSame(offer, campaign.getOffer());
     }
 
+    @Test
+    void activateCampaign_shouldActivateCampaign_whenDraft() {
+
+        // Arrange
+        Offer offer = newOffer();
+        Campaign campaign = newCampaign("Campaign A");
+        offer.addCampaign(campaign);
+
+        // Act
+        offer.activateCampaign(campaign, TODAY);
+
+        // Assert
+        assertEquals(CampaignStatus.ACTIVE, campaign.getStatus());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
