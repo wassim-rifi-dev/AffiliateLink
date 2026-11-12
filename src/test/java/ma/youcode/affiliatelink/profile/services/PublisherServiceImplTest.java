@@ -165,4 +165,24 @@ public class PublisherServiceImplTest {
         verify(publisherMapper).toResponseDTO(publisher1);
         verify(publisherMapper).toResponseDTO(publisher2);
     }
+
+    @Test
+    void getAllPublisher_shouldReturnEmptyList_whenNoPublishers() {
+
+        // Arrange
+        Publisher publisher = new Publisher();
+
+        when(publisherRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<PublisherResponseDTO> result = publisherService.getAllPublisher();
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        // Verify
+        verify(publisherRepository).findAll();
+        verify(publisherMapper, never()).toResponseDTO(publisher);
+    }
 }
