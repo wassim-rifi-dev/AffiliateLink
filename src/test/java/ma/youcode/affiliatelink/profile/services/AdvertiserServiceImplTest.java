@@ -6,7 +6,7 @@ import ma.youcode.affiliatelink.profile.mapper.AdvertiserMapper;
 import ma.youcode.affiliatelink.profile.model.entity.Advertiser;
 import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 import ma.youcode.affiliatelink.profile.repository.AdvertiserRepository;
-import ma.youcode.affiliatelink.profile.service.AdvertiserService;
+import ma.youcode.affiliatelink.profile.service.impl.AdvertiserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +29,7 @@ public class AdvertiserServiceImplTest {
     private AdvertiserMapper advertiserMapper;
 
     @InjectMocks
-    private AdvertiserService advertiserService;
+    private AdvertiserServiceImpl advertiserService;
 
     @Test
     void createAdvertiser_shouldReturnResponseDTO_whenEmailDoesNotExist() {
