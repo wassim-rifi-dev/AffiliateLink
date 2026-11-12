@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.profile.services;
 
 import ma.youcode.affiliatelink.common.enums.Niche;
+import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.profile.mapper.PublisherMapper;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -76,5 +78,39 @@ public class PublisherServiceImplTest {
         verify(publisherMapper).toEntity(requestDTO);
         verify(publisherRepository).save(publisher);
         verify(publisherMapper).toResponseDTO(publisher);
+    }
+
+    @Test
+    void createPublisher_shouldThrowEmailAlreadyExistsException_whenEmailExists() {
+
+        // Arrange
+        CreatePublisherRequestDTO requestDTO = new CreatePublisherRequestDTO(
+                "test@email.com",
+                "John",
+                "Doe",
+                Niche.TECH,
+                "Tech content creator",
+                "Morocco"
+        );
+
+        Publisher publisher = new Publisher();
+
+        when(publisherRepository.existsByEmail(requestDTO.email())).thenReturn(true);
+
+        // Act
+        EmailAlreadyExistsException exception = assertThrows(
+                EmailAlreadyExistsException.class,
+                () -> publisherService.createPublisher(requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Email already existe.", exception.getMessage());
+
+        // Verify
+        verify(publisherRepository).existsByEmail(requestDTO.email());
+        verify(publisherMapper, never()).toEntity(requestDTO);
+        verify(publisherRepository, never()).save(publisher);
+        verify(publisherMapper, never()).toResponseDTO(publisher);
     }
 }
