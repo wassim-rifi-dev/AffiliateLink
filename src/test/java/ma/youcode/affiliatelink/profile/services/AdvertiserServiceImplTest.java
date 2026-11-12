@@ -268,4 +268,31 @@ public class AdvertiserServiceImplTest {
         // Verify
         verify(advertiserRepository).existsById(id);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnTrue_whenAdvertiserIsActive() {
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = Advertiser.builder()
+                .id(1L)
+                .companyName("test")
+                .sector("Technology")
+                .website("https://test.com")
+                .email("test@gmail.com")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.of(advertiser));
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(id);
+
+        // Assert
+        assertTrue(result);
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+    }
 }
