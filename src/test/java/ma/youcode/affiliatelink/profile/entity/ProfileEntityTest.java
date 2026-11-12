@@ -1,5 +1,6 @@
 package ma.youcode.affiliatelink.profile.entity;
 
+import ma.youcode.affiliatelink.common.exception.InvalidStatusTransitionException;
 import ma.youcode.affiliatelink.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 import org.junit.jupiter.api.Test;
@@ -44,5 +45,23 @@ public class ProfileEntityTest {
 
         publisher.setStatus(ProfileStatus.ACTIVE);
         assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
+    }
+
+    @Test
+    void setStatus_shouldThrow_whenTransitionIsInvalid() {
+
+        // Arrange
+        Publisher publisher = new Publisher();
+
+        // Act
+        InvalidStatusTransitionException exception = assertThrows(
+                InvalidStatusTransitionException.class,
+                () -> publisher.setStatus(ProfileStatus.SUSPENDED)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Invalid status transition from PENDING to SUSPENDED", exception.getMessage());
+        assertEquals(ProfileStatus.PENDING, publisher.getStatus());
     }
 }
