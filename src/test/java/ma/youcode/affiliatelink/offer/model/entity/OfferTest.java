@@ -77,6 +77,20 @@ public class OfferTest {
         assertEquals(Set.of(new Tag("java"), new Tag("spring")), offer.getTags());
     }
 
+    @Test
+    void replaceTags_shouldEmptyTags_whenSetIsEmpty() {
+
+        // Arrange
+        Offer offer = newOffer();
+        offer.replaceTags(Set.of(new Tag("java")));
+
+        // Act
+        offer.replaceTags(Set.of());
+
+        // Assert
+        assertTrue(offer.getTags().isEmpty());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
