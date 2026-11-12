@@ -118,6 +118,22 @@ public class ProfileEntityTest {
         assertEquals(createdAt, publisher.getCreatedAt());
     }
 
+    @Test
+    void getUserFullName_shouldConcatenateFirstAndLastName() {
+
+        // Arrange
+        Publisher publisher = Publisher.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        // Act
+        String result = publisher.getUserFullName();
+
+        // Assert
+        assertEquals("John Doe", result);
+    }
+
     // onCreate() is protected: this subclass exposes it to the test
     private static class TestPublisher extends Publisher {
         TestPublisher(PublisherBuilder<?, ?> builder) {
