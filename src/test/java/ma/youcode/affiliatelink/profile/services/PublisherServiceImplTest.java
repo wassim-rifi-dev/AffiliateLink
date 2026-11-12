@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.never;
@@ -184,5 +185,40 @@ public class PublisherServiceImplTest {
         // Verify
         verify(publisherRepository).findAll();
         verify(publisherMapper, never()).toResponseDTO(publisher);
+    }
+
+    @Test
+    void getPublisherById_shouldReturnResponseDTO_whenPublisherExists() {
+
+        // Arrange
+        Long id = 1L;
+
+        Publisher publisher = new Publisher();
+
+        PublisherResponseDTO responseDTO = PublisherResponseDTO.builder()
+                .id(id)
+                .email("test@email.com")
+                .firstName("John")
+                .lastName("Doe")
+                .niche(Niche.TECH)
+                .bio("Tech content creator")
+                .country("Morocco")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(publisherRepository.findById(id)).thenReturn(Optional.of(publisher));
+        when(publisherMapper.toResponseDTO(publisher)).thenReturn(responseDTO);
+
+        // Act
+        PublisherResponseDTO result = publisherService.getPublisherById(id);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+
+        // Verify
+        verify(publisherRepository).findById(id);
+        verify(publisherMapper).toResponseDTO(publisher);
     }
 }
