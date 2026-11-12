@@ -295,4 +295,75 @@ public class AdvertiserServiceImplTest {
         // Verify
         verify(advertiserRepository).findById(id);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserIsPending() {
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = Advertiser.builder()
+                .id(1L)
+                .companyName("test")
+                .sector("Technology")
+                .website("https://test.com")
+                .email("test@gmail.com")
+                .status(ProfileStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.of(advertiser));
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(id);
+
+        // Assert
+        assertFalse(result);
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+    }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserIsSuspended() {
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = Advertiser.builder()
+                .id(1L)
+                .companyName("test")
+                .sector("Technology")
+                .website("https://test.com")
+                .email("test@gmail.com")
+                .status(ProfileStatus.SUSPENDED)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.of(advertiser));
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(id);
+
+        // Assert
+        assertFalse(result);
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+    }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserNotFound() {
+        // Arrange
+        Long id = 1L;
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(id);
+
+        // Assert
+        assertFalse(result);
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+    }
 }
