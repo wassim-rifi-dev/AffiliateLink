@@ -213,4 +213,30 @@ public class ProfileServiceImplTest {
         verifyNoInteractions(eventPublisher);
         verify(profileMapper).toStatusResponseDTO(advertiser);
     }
+
+    @Test
+    void updateStatus_shouldThrowProfileNotExistException_whenProfileNotFound() {
+
+        // Arrange
+        Long id = 1L;
+
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE);
+
+        when(profileRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act
+        ProfileNotExistException exception = assertThrows(
+                ProfileNotExistException.class,
+                () -> profileService.updateStatus(id, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Profile not found with id: " + id, exception.getMessage());
+
+        // Verify
+        verify(profileRepository).findById(id);
+        verifyNoInteractions(eventPublisher);
+        verify(profileMapper, never()).toStatusResponseDTO(any());
+    }
 }
