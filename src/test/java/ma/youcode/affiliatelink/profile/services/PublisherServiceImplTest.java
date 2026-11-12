@@ -2,6 +2,7 @@ package ma.youcode.affiliatelink.profile.services;
 
 import ma.youcode.affiliatelink.common.enums.Niche;
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreatePublisherRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.PublisherResponseDTO;
 import ma.youcode.affiliatelink.profile.mapper.PublisherMapper;
@@ -220,5 +221,30 @@ public class PublisherServiceImplTest {
         // Verify
         verify(publisherRepository).findById(id);
         verify(publisherMapper).toResponseDTO(publisher);
+    }
+
+    @Test
+    void getPublisherById_shouldThrowProfileNotExistException_whenPublisherNotFound() {
+
+        // Arrange
+        Long id = 1L;
+
+        Publisher publisher = new Publisher();
+
+        when(publisherRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act
+        ProfileNotExistException exception = assertThrows(
+                ProfileNotExistException.class,
+                () -> publisherService.getPublisherById(id)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Publisher not found with id: " + id, exception.getMessage());
+
+        // Verify
+        verify(publisherRepository).findById(id);
+        verify(publisherMapper, never()).toResponseDTO(publisher);
     }
 }
