@@ -234,4 +234,23 @@ public class AdvertiserServiceImplTest {
         verify(advertiserRepository).findById(id);
         verify(advertiserMapper, never()).toResponseDTO(advertiser);
     }
+
+    @Test
+    void advertiserExists_shouldReturnTrue_whenRepositoryReturnsTrue() {
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = new Advertiser();
+
+        when(advertiserRepository.existsById(id)).thenReturn(true);
+
+        // Act
+        boolean result = advertiserService.advertiserExists(id);
+
+        // Assert
+        assertTrue(result);
+
+        // Verify
+        verify(advertiserRepository).existsById(id);
+    }
 }
