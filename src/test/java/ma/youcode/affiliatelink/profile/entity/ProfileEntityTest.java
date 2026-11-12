@@ -5,6 +5,8 @@ import ma.youcode.affiliatelink.profile.model.entity.Publisher;
 import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProfileEntityTest {
@@ -94,6 +96,26 @@ public class ProfileEntityTest {
         // Assert
         assertEquals(ProfileStatus.PENDING, publisher.getStatus());
         assertNotNull(publisher.getCreatedAt());
+    }
+
+    @Test
+    void onCreate_shouldKeepExistingValues() {
+
+        // Arrange
+        LocalDateTime createdAt = LocalDateTime.of(2025, 1, 1, 10, 0);
+
+        TestPublisher publisher = new TestPublisher(
+                Publisher.builder()
+                        .status(ProfileStatus.ACTIVE)
+                        .createdAt(createdAt)
+        );
+
+        // Act
+        publisher.callOnCreate();
+
+        // Assert
+        assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
+        assertEquals(createdAt, publisher.getCreatedAt());
     }
 
     // onCreate() is protected: this subclass exposes it to the test
