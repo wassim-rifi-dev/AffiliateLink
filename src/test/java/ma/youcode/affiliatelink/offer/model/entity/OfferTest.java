@@ -1,0 +1,34 @@
+package ma.youcode.affiliatelink.offer.model.entity;
+
+import ma.youcode.affiliatelink.common.enums.Niche;
+import ma.youcode.affiliatelink.common.exception.BusinessRuleException;
+import ma.youcode.affiliatelink.offer.model.enums.CampaignStatus;
+import ma.youcode.affiliatelink.offer.model.enums.PayoutModel;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class OfferTest {
+
+    @Test
+    void constructor_shouldInitializeFields() {
+
+        // Act
+        Offer offer = new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
+
+        // Assert
+        assertEquals(1L, offer.getAdvertiserId());
+        assertEquals("Summer Sale", offer.getTitle());
+        assertEquals("Big discounts", offer.getDescription());
+        assertEquals("https://shop.com", offer.getLandingUrl());
+        assertEquals(Niche.TECH, offer.getNiche());
+        assertNull(offer.getCreatedAt());
+        assertTrue(offer.getCampaigns().isEmpty());
+        assertTrue(offer.getTags().isEmpty());
+    }
+}
