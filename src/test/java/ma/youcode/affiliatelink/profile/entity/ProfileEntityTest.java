@@ -17,4 +17,17 @@ public class ProfileEntityTest {
         // Assert
         assertEquals(ProfileStatus.PENDING, publisher.getStatus());
     }
+
+    @Test
+    void setStatus_shouldActivatePendingProfile() {
+
+        // Arrange
+        Publisher publisher = new Publisher();
+
+        // Act
+        publisher.setStatus(ProfileStatus.ACTIVE);
+
+        // Assert
+        assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
+    }
 }
