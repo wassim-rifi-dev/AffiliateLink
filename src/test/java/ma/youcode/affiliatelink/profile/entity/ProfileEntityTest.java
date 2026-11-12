@@ -64,4 +64,19 @@ public class ProfileEntityTest {
         assertEquals("Invalid status transition from PENDING to SUSPENDED", exception.getMessage());
         assertEquals(ProfileStatus.PENDING, publisher.getStatus());
     }
+
+    @Test
+    void setStatus_shouldAcceptAnyStatus_whenCurrentStatusIsNull() {
+
+        // Arrange
+        // With @SuperBuilder, status is null because @Builder.Default is missing
+        Publisher publisher = Publisher.builder().build();
+        assertNull(publisher.getStatus());
+
+        // Act
+        publisher.setStatus(ProfileStatus.SUSPENDED);
+
+        // Assert
+        assertEquals(ProfileStatus.SUSPENDED, publisher.getStatus());
+    }
 }
