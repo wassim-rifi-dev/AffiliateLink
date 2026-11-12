@@ -176,6 +176,20 @@ public class OfferTest {
         );
     }
 
+    @Test
+    void getTags_shouldReturnUnmodifiableSet() {
+
+        // Arrange
+        Offer offer = newOffer();
+        Set<Tag> tags = offer.getTags();
+
+        // Act & Assert
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> tags.add(new Tag("java"))
+        );
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
