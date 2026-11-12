@@ -123,6 +123,25 @@ public class OfferTest {
         assertEquals(CampaignStatus.ACTIVE, campaign.getStatus());
     }
 
+    @Test
+    void activateCampaign_shouldPauseOtherActiveCampaigns() {
+
+        // Arrange
+        Offer offer = newOffer();
+        Campaign first = newCampaign("Campaign A");
+        Campaign second = newCampaign("Campaign B");
+        offer.addCampaign(first);
+        offer.addCampaign(second);
+        offer.activateCampaign(first, TODAY);
+
+        // Act
+        offer.activateCampaign(second, TODAY);
+
+        // Assert
+        assertEquals(CampaignStatus.PAUSED, first.getStatus());
+        assertEquals(CampaignStatus.ACTIVE, second.getStatus());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
     }
