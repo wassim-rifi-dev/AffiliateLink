@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.never;
@@ -105,5 +106,52 @@ public class AdvertiserServiceImplTest {
         verify(advertiserMapper, never()).toEntity(requestDTO);
         verify(advertiserRepository, never()).save(advertiser);
         verify(advertiserMapper, never()).toResponseDTO(advertiser);
+    }
+
+    @Test
+    void getAllAdvertisers_shouldReturnMappedList() {
+
+        // Arrange
+        Advertiser advertiser1 = new Advertiser();
+        Advertiser advertiser2 = new Advertiser();
+
+        List<Advertiser> advertisers = List.of(advertiser1, advertiser2);
+
+        AdvertiserResponseDTO responseDTO1 = AdvertiserResponseDTO.builder()
+                .id(1L)
+                .email("test1@email.com")
+                .status(ProfileStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .companyName("Test Company 1")
+                .sector("Technology")
+                .website("https://test1.com")
+                .build();
+
+        AdvertiserResponseDTO responseDTO2 = AdvertiserResponseDTO.builder()
+                .id(2L)
+                .email("test2@email.com")
+                .status(ProfileStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .companyName("Test Company 2")
+                .sector("Finance")
+                .website("https://test2.com")
+                .build();
+
+        when(advertiserRepository.findAll()).thenReturn(advertisers);
+        when(advertiserMapper.toResponseDTO(advertiser1)).thenReturn(responseDTO1);
+        when(advertiserMapper.toResponseDTO(advertiser2)).thenReturn(responseDTO2);
+
+        // Act
+        List<AdvertiserResponseDTO> result = advertiserService.getAllAdvertisers();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(List.of(responseDTO1, responseDTO2), result);
+
+        // Verify
+        verify(advertiserRepository).findAll();
+        verify(advertiserMapper).toResponseDTO(advertiser1);
+        verify(advertiserMapper).toResponseDTO(advertiser2);
     }
 }
