@@ -30,4 +30,19 @@ public class ProfileEntityTest {
         // Assert
         assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
     }
+
+    @Test
+    void setStatus_shouldSuspendThenReactivateProfile() {
+
+        // Arrange
+        Publisher publisher = new Publisher();
+        publisher.setStatus(ProfileStatus.ACTIVE);
+
+        // Act & Assert
+        publisher.setStatus(ProfileStatus.SUSPENDED);
+        assertEquals(ProfileStatus.SUSPENDED, publisher.getStatus());
+
+        publisher.setStatus(ProfileStatus.ACTIVE);
+        assertEquals(ProfileStatus.ACTIVE, publisher.getStatus());
+    }
 }
