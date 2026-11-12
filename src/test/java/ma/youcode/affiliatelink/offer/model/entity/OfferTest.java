@@ -31,4 +31,22 @@ public class OfferTest {
         assertTrue(offer.getCampaigns().isEmpty());
         assertTrue(offer.getTags().isEmpty());
     }
+
+    @Test
+    void onCreate_shouldSetCreatedAt() {
+
+        // Arrange
+        Offer offer = newOffer();
+        assertNull(offer.getCreatedAt());
+
+        // Act
+        offer.onCreate();
+
+        // Assert
+        assertNotNull(offer.getCreatedAt());
+    }
+
+    private static Offer newOffer() {
+        return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
+    }
 }
