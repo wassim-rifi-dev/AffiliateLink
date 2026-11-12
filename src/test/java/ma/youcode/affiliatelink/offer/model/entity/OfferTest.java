@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OfferTest {
 
+    private static final LocalDate TODAY = LocalDate.of(2025, 6, 1);
+
     @Test
     void constructor_shouldInitializeFields() {
 
@@ -91,7 +93,33 @@ public class OfferTest {
         assertTrue(offer.getTags().isEmpty());
     }
 
+    @Test
+    void addCampaign_shouldAddCampaignAndLinkOffer() {
+
+        // Arrange
+        Offer offer = newOffer();
+        Campaign campaign = newCampaign("Campaign A");
+
+        // Act
+        offer.addCampaign(campaign);
+
+        // Assert
+        assertEquals(List.of(campaign), offer.getCampaigns());
+        assertSame(offer, campaign.getOffer());
+    }
+
     private static Offer newOffer() {
         return new Offer(1L, "Summer Sale", "Big discounts", "https://shop.com", Niche.TECH);
+    }
+
+    private static Campaign newCampaign(String name) {
+        return new Campaign(
+                name,
+                TODAY,
+                TODAY.plusDays(30),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
     }
 }
