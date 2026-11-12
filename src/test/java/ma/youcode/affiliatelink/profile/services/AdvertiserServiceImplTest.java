@@ -1,6 +1,7 @@
 package ma.youcode.affiliatelink.profile.services;
 
 import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
 import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
 import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
 import ma.youcode.affiliatelink.profile.mapper.AdvertiserMapper;
@@ -207,5 +208,30 @@ public class AdvertiserServiceImplTest {
         // Verify
         verify(advertiserRepository).findById(id);
         verify(advertiserMapper).toResponseDTO(advertiser);
+    }
+
+    @Test
+    void getAdvertiserById_shouldThrowProfileNotExistException_whenAdvertiserNotFound() {
+
+        // Arrange
+        Long id = 1L;
+
+        Advertiser advertiser = new Advertiser();
+
+        when(advertiserRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act
+        ProfileNotExistException exception = assertThrows(
+                ProfileNotExistException.class,
+                () -> advertiserService.getAdvertiserById(id)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Advertiser not found with id: " + id, exception.getMessage());
+
+        // Verify
+        verify(advertiserRepository).findById(id);
+        verify(advertiserMapper, never()).toResponseDTO(advertiser);
     }
 }
