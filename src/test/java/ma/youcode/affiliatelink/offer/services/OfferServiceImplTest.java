@@ -260,4 +260,36 @@ public class OfferServiceImplTest {
         // Verify
         verifyNoInteractions(tagRepository);
     }
+
+    @Test
+    void getOfferById_shouldReturnDto_whenOfferExists() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Test Offer", "Test description", "https://test.com", Niche.TECH);
+
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("Test Offer")
+                .description("Test description")
+                .landingUrl("https://test.com")
+                .niche(Niche.TECH)
+                .createdAt(LocalDateTime.now())
+                .tags(Set.of())
+                .build();
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(offerMapper.toResponseDTO(offer)).thenReturn(responseDTO);
+
+        // Act
+        OfferResponseDTO result = offerService.getOfferById(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(offerMapper).toResponseDTO(offer);
+    }
 }
