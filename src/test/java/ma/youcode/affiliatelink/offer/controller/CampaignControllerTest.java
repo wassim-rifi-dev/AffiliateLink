@@ -149,4 +149,31 @@ public class CampaignControllerTest {
         // Verify
         verify(campaignService).updateStatus(1L, requestDTO);
     }
+
+    @Test
+    void updateStatus_shouldReturn404_whenCampaignNotFound() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "status": "ACTIVE"
+                }
+                """;
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE);
+
+        doThrow(new CampaignNotFoundException("Campaign not found with id: 1"))
+                .when(campaignService).updateStatus(1L, requestDTO);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/campaigns/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Campaign not found"))
+                .andExpect(jsonPath("$.detail").value("Campaign not found with id: 1"));
+
+        // Verify
+        verify(campaignService).updateStatus(1L, requestDTO);
+    }
 }
