@@ -160,4 +160,18 @@ public class OfferControllerTest {
         Pageable pageable = pageableCaptor.getValue();
         assertEquals(Sort.Direction.DESC, pageable.getSort().getOrderFor("createdAt").getDirection());
     }
+
+    @Test
+    void searchOffers_shouldReturn400_whenNicheIsInvalid() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(get("/api/offers")
+                        .param("niche", "UNKNOWN"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Invalid request parameter"))
+                .andExpect(jsonPath("$.detail").value("Invalid value 'UNKNOWN' for parameter 'niche'"));
+
+        // Verify
+        verifyNoInteractions(offerService);
+    }
 }
