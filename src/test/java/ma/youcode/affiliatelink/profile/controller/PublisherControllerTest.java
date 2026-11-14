@@ -105,4 +105,26 @@ public class PublisherControllerTest {
         // Verify
         verify(publisherService).createPublisher(VALID_REQUEST_DTO);
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenBodyIsInvalid() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "email": "not-an-email",
+                  "firstName": "",
+                  "lastName": "Doe"
+                }
+                """;
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        // Verify
+        verifyNoInteractions(publisherService);
+    }
 }
