@@ -478,4 +478,26 @@ public class CampaignServiceImplTest {
         verify(offerRepository).findById(1L);
         verify(profileApi).isActiveAdvertiser(1L);
     }
+
+    @Test
+    void updateStatus_shouldNotThrow_whenPausingActiveCampaign() {
+
+        // Arrange
+        Campaign campaign = newCampaign("Active Campaign");
+        campaign.activate(LocalDate.now());
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.PAUSED);
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.of(campaign));
+
+        // Act
+        assertDoesNotThrow(() -> campaignService.updateStatus(1L, requestDTO));
+
+        // Assert
+        assertEquals(CampaignStatus.PAUSED, campaign.getStatus());
+
+        // Verify
+        verify(campaignRepository).findById(1L);
+        verify(campaignRepository, never()).save(any(Campaign.class));
+    }
 }
