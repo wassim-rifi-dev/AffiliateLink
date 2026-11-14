@@ -192,4 +192,39 @@ public class CampaignServiceImplTest {
         verify(profileApi).isActiveAdvertiser(1L);
         verifyNoInteractions(campaignRepository, campaignMapper);
     }
+
+    @Test
+    void createCampaign_shouldThrow_whenDatesAreInvalid() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Test Offer", "Test description", "https://test.com", Niche.TECH);
+
+        CreateCampaignRequestDTO requestDTO = new CreateCampaignRequestDTO(
+                "Test Campaign",
+                LocalDate.now().plusDays(30),
+                LocalDate.now(),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(true);
+
+        // Act
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> campaignService.createCampaign(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("End date must be after start date", exception.getMessage());
+        assertTrue(offer.getCampaigns().isEmpty());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(profileApi).isActiveAdvertiser(1L);
+        verifyNoInteractions(campaignRepository, campaignMapper);
+    }
 }
