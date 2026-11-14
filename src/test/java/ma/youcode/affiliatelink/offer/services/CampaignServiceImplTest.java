@@ -271,4 +271,29 @@ public class CampaignServiceImplTest {
         verify(campaignRepository).findById(1L);
         verify(campaignRepository, never()).save(any(Campaign.class));
     }
+
+    @Test
+    void updateStatus_shouldThrow_whenTransitionIsInvalid() {
+
+        // Arrange
+        Campaign campaign = newCampaign("Test Campaign");
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.PAUSED);
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.of(campaign));
+
+        // Act
+        InvalidStatusTransitionException exception = assertThrows(
+                InvalidStatusTransitionException.class,
+                () -> campaignService.updateStatus(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Invalid status transition: DRAFT -> PAUSED", exception.getMessage());
+        assertEquals(CampaignStatus.DRAFT, campaign.getStatus());
+
+        // Verify
+        verify(campaignRepository).findById(1L);
+    }
 }
