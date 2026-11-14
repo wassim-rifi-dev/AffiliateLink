@@ -103,4 +103,26 @@ public class OfferControllerTest {
         // Verify
         verify(offerService).createOffer(expectedDTO);
     }
+
+    @Test
+    void createOffer_shouldReturn400_whenBodyIsInvalid() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "advertiserId": -1,
+                  "title": "",
+                  "landingUrl": "not-a-url"
+                }
+                """;
+
+        // Act & Assert
+        mockMvc.perform(post("/api/offers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        // Verify
+        verifyNoInteractions(offerService, campaignService);
+    }
 }
