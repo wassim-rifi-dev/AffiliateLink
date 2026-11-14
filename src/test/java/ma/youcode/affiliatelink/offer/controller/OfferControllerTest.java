@@ -197,4 +197,21 @@ public class OfferControllerTest {
         // Verify
         verify(offerService).getOfferById(1L);
     }
+
+    @Test
+    void getOfferById_shouldReturn404_whenOfferNotFound() throws Exception {
+
+        // Arrange
+        when(offerService.getOfferById(1L))
+                .thenThrow(new OfferNotFoundException("Offer not found with id: 1"));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/offers/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Offer not found"))
+                .andExpect(jsonPath("$.detail").value("Offer not found with id: 1"));
+
+        // Verify
+        verify(offerService).getOfferById(1L);
+    }
 }
