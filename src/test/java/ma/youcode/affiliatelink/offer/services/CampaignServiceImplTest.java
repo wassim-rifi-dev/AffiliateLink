@@ -368,4 +368,45 @@ public class CampaignServiceImplTest {
         verify(campaignRepository, never()).save(any(Campaign.class));
         verifyNoInteractions(offerRepository, campaignMapper, profileApi);
     }
+
+    @Test
+    void getCampaigns_shouldReturnAll_whenStatusIsNull() {
+
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Campaign campaign1 = newCampaign("Campaign 1");
+        Campaign campaign2 = newCampaign("Campaign 2");
+
+        CampaignResponseDTO responseDTO1 = CampaignResponseDTO.builder()
+                .id(1L)
+                .name("Campaign 1")
+                .status(CampaignStatus.DRAFT)
+                .build();
+
+        CampaignResponseDTO responseDTO2 = CampaignResponseDTO.builder()
+                .id(2L)
+                .name("Campaign 2")
+                .status(CampaignStatus.DRAFT)
+                .build();
+
+        when(campaignRepository.findAll(pageable))
+                .thenReturn(new PageImpl<>(List.of(campaign1, campaign2), pageable, 2));
+        when(campaignMapper.toResponseDTO(campaign1)).thenReturn(responseDTO1);
+        when(campaignMapper.toResponseDTO(campaign2)).thenReturn(responseDTO2);
+
+        // Act
+        Page<CampaignResponseDTO> result = campaignService.getCampaigns(null, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(List.of(responseDTO1, responseDTO2), result.getContent());
+
+        // Verify
+        verify(campaignRepository).findAll(pageable);
+        verify(campaignRepository, never()).findByStatus(any(CampaignStatus.class), any(Pageable.class));
+        verify(campaignMapper).toResponseDTO(campaign1);
+        verify(campaignMapper).toResponseDTO(campaign2);
+    }
 }
