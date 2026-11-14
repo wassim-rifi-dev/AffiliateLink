@@ -158,4 +158,29 @@ public class PublisherControllerTest {
         // Verify
         verify(publisherService).getAllPublisher();
     }
+
+    @Test
+    void getPublisherById_shouldReturn200() throws Exception {
+
+        // Arrange
+        PublisherResponseDTO responseDTO = PublisherResponseDTO.builder()
+                .id(1L)
+                .email("test@email.com")
+                .firstName("John")
+                .lastName("Doe")
+                .status(ProfileStatus.ACTIVE)
+                .build();
+
+        when(publisherService.getPublisherById(1L)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("test@email.com"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+
+        // Verify
+        verify(publisherService).getPublisherById(1L);
+    }
 }
