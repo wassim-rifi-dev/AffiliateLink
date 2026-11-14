@@ -157,4 +157,39 @@ public class CampaignServiceImplTest {
         verify(offerRepository).findById(1L);
         verifyNoInteractions(profileApi, campaignRepository, campaignMapper);
     }
+
+    @Test
+    void createCampaign_shouldThrow_whenAdvertiserIsNotActive() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Test Offer", "Test description", "https://test.com", Niche.TECH);
+
+        CreateCampaignRequestDTO requestDTO = new CreateCampaignRequestDTO(
+                "Test Campaign",
+                LocalDate.now(),
+                LocalDate.now().plusDays(30),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(false);
+
+        // Act
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
+                () -> campaignService.createCampaign(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Advertiser owning the offer must be active to create a campaign", exception.getMessage());
+        assertTrue(offer.getCampaigns().isEmpty());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(profileApi).isActiveAdvertiser(1L);
+        verifyNoInteractions(campaignRepository, campaignMapper);
+    }
 }
