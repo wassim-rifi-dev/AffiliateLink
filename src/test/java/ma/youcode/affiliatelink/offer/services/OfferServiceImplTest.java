@@ -313,4 +313,57 @@ public class OfferServiceImplTest {
         verify(offerRepository).findById(1L);
         verifyNoInteractions(offerMapper);
     }
+
+    @Test
+    void updateOffer_shouldUpdateFieldsAndTags_whenOfferExists() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Old Offer", "Old description", "https://old.com", Niche.TECH);
+        offer.replaceTags(Set.of(new Tag("old")));
+
+        UpdateOfferRequestDTO requestDTO = new UpdateOfferRequestDTO(
+                "New Offer",
+                "New description",
+                "https://new.com",
+                Niche.GAMING,
+                Set.of("New")
+        );
+
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("New Offer")
+                .description("New description")
+                .landingUrl("https://new.com")
+                .niche(Niche.GAMING)
+                .createdAt(LocalDateTime.now())
+                .tags(Set.of("new"))
+                .build();
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(tagRepository.findByNameIn(Set.of("new"))).thenReturn(List.of());
+        when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(offerRepository.save(offer)).thenReturn(offer);
+        when(offerMapper.toResponseDTO(offer)).thenReturn(responseDTO);
+
+        // Act
+        OfferResponseDTO result = offerService.updateOffer(1L, requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(responseDTO, result);
+
+        assertEquals("New Offer", offer.getTitle());
+        assertEquals("New description", offer.getDescription());
+        assertEquals("https://new.com", offer.getLandingUrl());
+        assertEquals(Niche.GAMING, offer.getNiche());
+        assertEquals(Set.of("new"), tagNames(offer));
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(tagRepository).findByNameIn(Set.of("new"));
+        verify(tagRepository).save(argThat(tag -> tag.getName().equals("new")));
+        verify(offerRepository).save(offer);
+        verify(offerMapper).toResponseDTO(offer);
+    }
 }
