@@ -35,4 +35,20 @@ public class ProfileApiTest {
         // Verify
         verify(advertiserService).advertiserExists(1L);
     }
+
+    @Test
+    void advertiserExists_shouldReturnFalse_whenServiceReturnsFalse() {
+
+        // Arrange
+        when(advertiserService.advertiserExists(1L)).thenReturn(false);
+
+        // Act
+        boolean result = profileApi.advertiserExists(1L);
+
+        // Assert
+        assertFalse(result);
+
+        // Verify
+        verify(advertiserService).advertiserExists(1L);
+    }
 }
