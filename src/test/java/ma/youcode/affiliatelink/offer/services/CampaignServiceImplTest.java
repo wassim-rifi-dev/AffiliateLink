@@ -409,4 +409,37 @@ public class CampaignServiceImplTest {
         verify(campaignMapper).toResponseDTO(campaign1);
         verify(campaignMapper).toResponseDTO(campaign2);
     }
+
+    @Test
+    void getCampaigns_shouldFilterByStatus_whenStatusIsProvided() {
+
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Campaign campaign = newCampaign("Active Campaign");
+        campaign.activate(LocalDate.now());
+
+        CampaignResponseDTO responseDTO = CampaignResponseDTO.builder()
+                .id(1L)
+                .name("Active Campaign")
+                .status(CampaignStatus.ACTIVE)
+                .build();
+
+        when(campaignRepository.findByStatus(CampaignStatus.ACTIVE, pageable))
+                .thenReturn(new PageImpl<>(List.of(campaign), pageable, 1));
+        when(campaignMapper.toResponseDTO(campaign)).thenReturn(responseDTO);
+
+        // Act
+        Page<CampaignResponseDTO> result = campaignService.getCampaigns(CampaignStatus.ACTIVE, pageable);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(List.of(responseDTO), result.getContent());
+
+        // Verify
+        verify(campaignRepository).findByStatus(CampaignStatus.ACTIVE, pageable);
+        verify(campaignRepository, never()).findAll(any(Pageable.class));
+        verify(campaignMapper).toResponseDTO(campaign);
+    }
 }
