@@ -127,4 +127,35 @@ public class PublisherControllerTest {
         // Verify
         verifyNoInteractions(publisherService);
     }
+
+    @Test
+    void getAllPublisher_shouldReturn200() throws Exception {
+
+        // Arrange
+        PublisherResponseDTO responseDTO1 = PublisherResponseDTO.builder()
+                .id(1L)
+                .email("test1@email.com")
+                .firstName("John")
+                .build();
+
+        PublisherResponseDTO responseDTO2 = PublisherResponseDTO.builder()
+                .id(2L)
+                .email("test2@email.com")
+                .firstName("Jane")
+                .build();
+
+        when(publisherService.getAllPublisher()).thenReturn(List.of(responseDTO1, responseDTO2));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].firstName").value("Jane"));
+
+        // Verify
+        verify(publisherService).getAllPublisher();
+    }
 }
