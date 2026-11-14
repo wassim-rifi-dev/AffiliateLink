@@ -227,4 +227,25 @@ public class CampaignServiceImplTest {
         verify(profileApi).isActiveAdvertiser(1L);
         verifyNoInteractions(campaignRepository, campaignMapper);
     }
+
+    @Test
+    void updateStatus_shouldChangeStatus_whenTransitionIsValid() {
+
+        // Arrange
+        Campaign campaign = newCampaign("Test Campaign");
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE);
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.of(campaign));
+
+        // Act
+        campaignService.updateStatus(1L, requestDTO);
+
+        // Assert
+        assertEquals(CampaignStatus.ACTIVE, campaign.getStatus());
+
+        // Verify
+        verify(campaignRepository).findById(1L);
+        verify(campaignRepository, never()).save(any(Campaign.class));
+    }
 }
