@@ -119,4 +119,35 @@ public class AdvertiserControllerTest {
         // Verify
         verifyNoInteractions(advertiserService);
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturn200() throws Exception {
+
+        // Arrange
+        AdvertiserResponseDTO responseDTO1 = AdvertiserResponseDTO.builder()
+                .id(1L)
+                .email("test1@email.com")
+                .companyName("Test Company 1")
+                .build();
+
+        AdvertiserResponseDTO responseDTO2 = AdvertiserResponseDTO.builder()
+                .id(2L)
+                .email("test2@email.com")
+                .companyName("Test Company 2")
+                .build();
+
+        when(advertiserService.getAllAdvertisers()).thenReturn(List.of(responseDTO1, responseDTO2));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].companyName").value("Test Company 1"))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].companyName").value("Test Company 2"));
+
+        // Verify
+        verify(advertiserService).getAllAdvertisers();
+    }
 }
