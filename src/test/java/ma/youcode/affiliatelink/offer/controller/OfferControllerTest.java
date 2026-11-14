@@ -174,4 +174,27 @@ public class OfferControllerTest {
         // Verify
         verifyNoInteractions(offerService);
     }
+
+    @Test
+    void getOfferById_shouldReturn200() throws Exception {
+
+        // Arrange
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("Test Offer")
+                .niche(Niche.TECH)
+                .build();
+
+        when(offerService.getOfferById(1L)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/offers/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Test Offer"));
+
+        // Verify
+        verify(offerService).getOfferById(1L);
+    }
 }
