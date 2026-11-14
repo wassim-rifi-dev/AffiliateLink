@@ -77,4 +77,28 @@ public class CampaignControllerTest {
         Pageable pageable = pageableCaptor.getValue();
         assertEquals(Sort.Direction.DESC, pageable.getSort().getOrderFor("startDate").getDirection());
     }
+
+    @Test
+    void getCampaigns_shouldFilterByStatus() throws Exception {
+
+        // Arrange
+        CampaignResponseDTO responseDTO = CampaignResponseDTO.builder()
+                .id(1L)
+                .name("Active Campaign")
+                .status(CampaignStatus.ACTIVE)
+                .build();
+
+        when(campaignService.getCampaigns(eq(CampaignStatus.ACTIVE), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(responseDTO)));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/campaigns")
+                        .param("status", "ACTIVE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].status").value("ACTIVE"));
+
+        // Verify
+        verify(campaignService).getCampaigns(eq(CampaignStatus.ACTIVE), any(Pageable.class));
+    }
 }
