@@ -60,4 +60,31 @@ public class AdminProfileControllerTest {
         // Verify
         verify(profileService).updateStatus(1L, requestDTO);
     }
+
+    @Test
+    void updateStatus_shouldReturn404_whenProfileNotFound() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "status": "ACTIVE"
+                }
+                """;
+
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE);
+
+        when(profileService.updateStatus(1L, requestDTO))
+                .thenThrow(new ProfileNotExistException("Profile not found with id: 1"));
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"))
+                .andExpect(jsonPath("$.detail").value("Profile not found with id: 1"));
+
+        // Verify
+        verify(profileService).updateStatus(1L, requestDTO);
+    }
 }
