@@ -296,4 +296,36 @@ public class CampaignServiceImplTest {
         // Verify
         verify(campaignRepository).findById(1L);
     }
+
+    @Test
+    void updateStatus_shouldThrow_whenActivatingWithPassedEndDate() {
+
+        // Arrange
+        Campaign campaign = new Campaign(
+                "Expired Campaign",
+                LocalDate.now().minusDays(30),
+                LocalDate.now().minusDays(1),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE);
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.of(campaign));
+
+        // Act
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
+                () -> campaignService.updateStatus(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Cannot activate a campaign whose end date has passed", exception.getMessage());
+        assertEquals(CampaignStatus.DRAFT, campaign.getStatus());
+
+        // Verify
+        verify(campaignRepository).findById(1L);
+    }
 }
