@@ -51,4 +51,20 @@ public class ProfileApiTest {
         // Verify
         verify(advertiserService).advertiserExists(1L);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnTrue_whenServiceReturnsTrue() {
+
+        // Arrange
+        when(advertiserService.isActiveAdvertiser(1L)).thenReturn(true);
+
+        // Act
+        boolean result = profileApi.isActiveAdvertiser(1L);
+
+        // Assert
+        assertTrue(result);
+
+        // Verify
+        verify(advertiserService).isActiveAdvertiser(1L);
+    }
 }
