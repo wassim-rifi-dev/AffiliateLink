@@ -214,4 +214,51 @@ public class OfferControllerTest {
         // Verify
         verify(offerService).getOfferById(1L);
     }
+
+    @Test
+    void updateOffer_shouldReturn200() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "title": "New Offer",
+                  "description": "New description",
+                  "landingUrl": "https://new.com",
+                  "niche": "GAMING",
+                  "tags": ["new"]
+                }
+                """;
+
+        UpdateOfferRequestDTO expectedDTO = new UpdateOfferRequestDTO(
+                "New Offer",
+                "New description",
+                "https://new.com",
+                Niche.GAMING,
+                Set.of("new")
+        );
+
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("New Offer")
+                .description("New description")
+                .landingUrl("https://new.com")
+                .niche(Niche.GAMING)
+                .tags(Set.of("new"))
+                .build();
+
+        when(offerService.updateOffer(1L, expectedDTO)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(put("/api/offers/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("New Offer"))
+                .andExpect(jsonPath("$.niche").value("GAMING"));
+
+        // Verify
+        verify(offerService).updateOffer(1L, expectedDTO);
+    }
 }
