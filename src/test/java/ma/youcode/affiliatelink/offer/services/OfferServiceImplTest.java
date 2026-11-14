@@ -158,4 +158,37 @@ public class OfferServiceImplTest {
         verify(offerRepository, never()).save(any(Offer.class));
         verifyNoInteractions(tagRepository, offerMapper);
     }
+
+    @Test
+    void createOffer_shouldThrow_whenAdvertiserIsNotActive() {
+
+        // Arrange
+        CreateOfferRequestDTO requestDTO = new CreateOfferRequestDTO(
+                1L,
+                "Test Offer",
+                "Test description",
+                "https://test.com",
+                Niche.TECH,
+                null
+        );
+
+        when(profileApi.advertiserExists(1L)).thenReturn(true);
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(false);
+
+        // Act
+        BusinessRuleException exception = assertThrows(
+                BusinessRuleException.class,
+                () -> offerService.createOffer(requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Advertiser must be active to create an offer", exception.getMessage());
+
+        // Verify
+        verify(profileApi).advertiserExists(1L);
+        verify(profileApi).isActiveAdvertiser(1L);
+        verify(offerRepository, never()).save(any(Offer.class));
+        verifyNoInteractions(tagRepository, offerMapper);
+    }
 }
