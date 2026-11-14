@@ -442,4 +442,35 @@ public class OfferServiceImplTest {
             verify(offerMapper).toResponseDTO(offer);
         }
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void searchOffers_shouldIgnoreBlankTagAndKeyword() {
+
+        // Arrange
+        OfferSearchCriteria criteria = new OfferSearchCriteria(Niche.TECH, null, "   ", "");
+        Pageable pageable = PageRequest.of(0, 10);
+
+        try (MockedStatic<OfferSpecifications> specifications = mockStatic(OfferSpecifications.class)) {
+            specifications.when(() -> OfferSpecifications.hasNiche(Niche.TECH)).thenReturn(mock(Specification.class));
+
+            when(offerRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(Page.empty(pageable));
+
+            // Act
+            Page<OfferResponseDTO> result = offerService.searchOffers(criteria, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+
+            // Verify
+            specifications.verify(() -> OfferSpecifications.hasNiche(Niche.TECH));
+            specifications.verify(() -> OfferSpecifications.hasAdvertiser(anyLong()), never());
+            specifications.verify(() -> OfferSpecifications.hasTag(anyString()), never());
+            specifications.verify(() -> OfferSpecifications.titleContains(anyString()), never());
+            verify(offerRepository).findAll(any(Specification.class), eq(pageable));
+            verifyNoInteractions(offerMapper);
+        }
+    }
 }
