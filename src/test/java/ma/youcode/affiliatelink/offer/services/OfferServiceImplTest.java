@@ -292,4 +292,25 @@ public class OfferServiceImplTest {
         verify(offerRepository).findById(1L);
         verify(offerMapper).toResponseDTO(offer);
     }
+
+    @Test
+    void getOfferById_shouldThrow_whenOfferNotFound() {
+
+        // Arrange
+        when(offerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        OfferNotFoundException exception = assertThrows(
+                OfferNotFoundException.class,
+                () -> offerService.getOfferById(1L)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Offer not found with id: 1", exception.getMessage());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verifyNoInteractions(offerMapper);
+    }
 }
