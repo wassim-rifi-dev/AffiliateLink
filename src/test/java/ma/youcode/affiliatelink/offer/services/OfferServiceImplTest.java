@@ -396,4 +396,50 @@ public class OfferServiceImplTest {
         verify(offerRepository, never()).save(any(Offer.class));
         verifyNoInteractions(tagRepository, offerMapper);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void searchOffers_shouldApplyAllFilters_whenCriteriaAreProvided() {
+
+        // Arrange
+        OfferSearchCriteria criteria = new OfferSearchCriteria(Niche.TECH, 1L, "java", "spring");
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Offer offer = new Offer(1L, "Spring Offer", "Test description", "https://test.com", Niche.TECH);
+
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("Spring Offer")
+                .niche(Niche.TECH)
+                .tags(Set.of("java"))
+                .build();
+
+        try (MockedStatic<OfferSpecifications> specifications = mockStatic(OfferSpecifications.class)) {
+            specifications.when(() -> OfferSpecifications.hasNiche(Niche.TECH)).thenReturn(mock(Specification.class));
+            specifications.when(() -> OfferSpecifications.hasAdvertiser(1L)).thenReturn(mock(Specification.class));
+            specifications.when(() -> OfferSpecifications.hasTag("java")).thenReturn(mock(Specification.class));
+            specifications.when(() -> OfferSpecifications.titleContains("spring")).thenReturn(mock(Specification.class));
+
+            when(offerRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(new PageImpl<>(List.of(offer), pageable, 1));
+            when(offerMapper.toResponseDTO(offer)).thenReturn(responseDTO);
+
+            // Act
+            Page<OfferResponseDTO> result = offerService.searchOffers(criteria, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(1, result.getTotalElements());
+            assertEquals(List.of(responseDTO), result.getContent());
+
+            // Verify
+            specifications.verify(() -> OfferSpecifications.hasNiche(Niche.TECH));
+            specifications.verify(() -> OfferSpecifications.hasAdvertiser(1L));
+            specifications.verify(() -> OfferSpecifications.hasTag("java"));
+            specifications.verify(() -> OfferSpecifications.titleContains("spring"));
+            verify(offerRepository).findAll(any(Specification.class), eq(pageable));
+            verify(offerMapper).toResponseDTO(offer);
+        }
+    }
 }
