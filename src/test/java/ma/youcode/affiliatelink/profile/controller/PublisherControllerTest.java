@@ -86,4 +86,23 @@ public class PublisherControllerTest {
         // Verify
         verify(publisherService).createPublisher(VALID_REQUEST_DTO);
     }
+
+    @Test
+    void createPublisher_shouldReturn409_whenEmailExists() throws Exception {
+
+        // Arrange
+        when(publisherService.createPublisher(VALID_REQUEST_DTO))
+                .thenThrow(new EmailAlreadyExistsException("Email already existe."));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_REQUEST_BODY))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Email already exists"))
+                .andExpect(jsonPath("$.detail").value("Email already existe."));
+
+        // Verify
+        verify(publisherService).createPublisher(VALID_REQUEST_DTO);
+    }
 }
