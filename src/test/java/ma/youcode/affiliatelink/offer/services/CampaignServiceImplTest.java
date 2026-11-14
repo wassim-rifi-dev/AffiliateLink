@@ -248,4 +248,27 @@ public class CampaignServiceImplTest {
         verify(campaignRepository).findById(1L);
         verify(campaignRepository, never()).save(any(Campaign.class));
     }
+
+    @Test
+    void updateStatus_shouldThrow_whenCampaignNotFound() {
+
+        // Arrange
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE);
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        CampaignNotFoundException exception = assertThrows(
+                CampaignNotFoundException.class,
+                () -> campaignService.updateStatus(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Campaign not found with id: 1", exception.getMessage());
+
+        // Verify
+        verify(campaignRepository).findById(1L);
+        verify(campaignRepository, never()).save(any(Campaign.class));
+    }
 }
