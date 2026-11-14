@@ -174,4 +174,21 @@ public class AdvertiserControllerTest {
         // Verify
         verify(advertiserService).getAdvertiserById(1L);
     }
+
+    @Test
+    void getAdvertiserById_shouldReturn404_whenNotFound() throws Exception {
+
+        // Arrange
+        when(advertiserService.getAdvertiserById(1L))
+                .thenThrow(new ProfileNotExistException("Advertiser not found with id: 1"));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"))
+                .andExpect(jsonPath("$.detail").value("Advertiser not found with id: 1"));
+
+        // Verify
+        verify(advertiserService).getAdvertiserById(1L);
+    }
 }
