@@ -126,4 +126,36 @@ public class OfferServiceImplTest {
         verify(profileApi).isActiveAdvertiser(1L);
         verify(offerMapper).toResponseDTO(savedOffer);
     }
+
+    @Test
+    void createOffer_shouldThrow_whenAdvertiserDoesNotExist() {
+
+        // Arrange
+        CreateOfferRequestDTO requestDTO = new CreateOfferRequestDTO(
+                1L,
+                "Test Offer",
+                "Test description",
+                "https://test.com",
+                Niche.TECH,
+                null
+        );
+
+        when(profileApi.advertiserExists(1L)).thenReturn(false);
+
+        // Act
+        ProfileNotExistException exception = assertThrows(
+                ProfileNotExistException.class,
+                () -> offerService.createOffer(requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Advertiser not found with id: 1", exception.getMessage());
+
+        // Verify
+        verify(profileApi).advertiserExists(1L);
+        verify(profileApi, never()).isActiveAdvertiser(anyLong());
+        verify(offerRepository, never()).save(any(Offer.class));
+        verifyNoInteractions(tagRepository, offerMapper);
+    }
 }
