@@ -97,4 +97,26 @@ public class AdvertiserControllerTest {
         // Verify
         verify(advertiserService).createAdvertiser(VALID_REQUEST_DTO);
     }
+
+    @Test
+    void createAdvertiser_shouldReturn400_whenBodyIsInvalid() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "email": "not-an-email",
+                  "companyName": "",
+                  "website": "not a url"
+                }
+                """;
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        // Verify
+        verifyNoInteractions(advertiserService);
+    }
 }
