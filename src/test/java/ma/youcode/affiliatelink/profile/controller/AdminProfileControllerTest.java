@@ -87,4 +87,24 @@ public class AdminProfileControllerTest {
         // Verify
         verify(profileService).updateStatus(1L, requestDTO);
     }
+
+    @Test
+    void updateStatus_shouldReturn400_whenStatusIsNull() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "status": null
+                }
+                """;
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        // Verify
+        verifyNoInteractions(profileService);
+    }
 }
