@@ -328,4 +328,28 @@ public class CampaignServiceImplTest {
         // Verify
         verify(campaignRepository).findById(1L);
     }
+
+    @Test
+    void pauseActiveCampaignsOfAdvertiser_shouldPauseAllActiveCampaigns() {
+
+        // Arrange
+        Campaign campaign1 = newCampaign("Campaign 1");
+        Campaign campaign2 = newCampaign("Campaign 2");
+        campaign1.activate(LocalDate.now());
+        campaign2.activate(LocalDate.now());
+
+        when(campaignRepository.findByOfferAdvertiserIdAndStatus(1L, CampaignStatus.ACTIVE))
+                .thenReturn(List.of(campaign1, campaign2));
+
+        // Act
+        campaignService.pauseActiveCampaignsOfAdvertiser(1L);
+
+        // Assert
+        assertEquals(CampaignStatus.PAUSED, campaign1.getStatus());
+        assertEquals(CampaignStatus.PAUSED, campaign2.getStatus());
+
+        // Verify
+        verify(campaignRepository).findByOfferAdvertiserIdAndStatus(1L, CampaignStatus.ACTIVE);
+        verify(campaignRepository, never()).save(any(Campaign.class));
+    }
 }
