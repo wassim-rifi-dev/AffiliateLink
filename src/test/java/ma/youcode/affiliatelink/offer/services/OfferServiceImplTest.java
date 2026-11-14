@@ -191,4 +191,42 @@ public class OfferServiceImplTest {
         verify(offerRepository, never()).save(any(Offer.class));
         verifyNoInteractions(tagRepository, offerMapper);
     }
+
+    @Test
+    void createOffer_shouldReuseExistingTagsAndCreateMissingOnes() {
+
+        // Arrange
+        CreateOfferRequestDTO requestDTO = new CreateOfferRequestDTO(
+                1L,
+                "Test Offer",
+                "Test description",
+                "https://test.com",
+                Niche.TECH,
+                Set.of(" Java ", "Spring")
+        );
+
+        Tag existingTag = new Tag("java");
+
+        when(profileApi.advertiserExists(1L)).thenReturn(true);
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(true);
+        when(tagRepository.findByNameIn(Set.of("java", "spring"))).thenReturn(List.of(existingTag));
+        when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(offerRepository.save(any(Offer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        offerService.createOffer(requestDTO);
+
+        // Assert
+        ArgumentCaptor<Offer> offerCaptor = ArgumentCaptor.forClass(Offer.class);
+        verify(offerRepository).save(offerCaptor.capture());
+        Offer savedOffer = offerCaptor.getValue();
+
+        assertEquals(Set.of("java", "spring"), tagNames(savedOffer));
+        assertTrue(savedOffer.getTags().stream().anyMatch(tag -> tag == existingTag));
+
+        // Verify
+        verify(tagRepository).findByNameIn(Set.of("java", "spring"));
+        verify(tagRepository, times(1)).save(any(Tag.class));
+        verify(tagRepository).save(argThat(tag -> tag.getName().equals("spring")));
+    }
 }
