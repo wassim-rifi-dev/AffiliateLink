@@ -639,4 +639,34 @@ public class OfferServiceImplTest {
             verify(offerRepository).findAll(any(Specification.class), eq(pageable));
         }
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void searchOffers_shouldApplyOnlyAdvertiserFilter_whenOnlyAdvertiserIdIsProvided() {
+
+        // Arrange
+        OfferSearchCriteria criteria = new OfferSearchCriteria(null, 1L, null, null);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        try (MockedStatic<OfferSpecifications> specifications = mockStatic(OfferSpecifications.class)) {
+            specifications.when(() -> OfferSpecifications.hasAdvertiser(1L)).thenReturn(mock(Specification.class));
+
+            when(offerRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(Page.empty(pageable));
+
+            // Act
+            Page<OfferResponseDTO> result = offerService.searchOffers(criteria, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+
+            // Verify
+            specifications.verify(() -> OfferSpecifications.hasAdvertiser(1L));
+            specifications.verify(() -> OfferSpecifications.hasNiche(any(Niche.class)), never());
+            specifications.verify(() -> OfferSpecifications.hasTag(anyString()), never());
+            specifications.verify(() -> OfferSpecifications.titleContains(anyString()), never());
+            verify(offerRepository).findAll(any(Specification.class), eq(pageable));
+        }
+    }
 }
