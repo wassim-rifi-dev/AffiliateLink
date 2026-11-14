@@ -366,4 +366,34 @@ public class OfferServiceImplTest {
         verify(offerRepository).save(offer);
         verify(offerMapper).toResponseDTO(offer);
     }
+
+    @Test
+    void updateOffer_shouldThrow_whenOfferNotFound() {
+
+        // Arrange
+        UpdateOfferRequestDTO requestDTO = new UpdateOfferRequestDTO(
+                "New Offer",
+                "New description",
+                "https://new.com",
+                Niche.GAMING,
+                Set.of("New")
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        OfferNotFoundException exception = assertThrows(
+                OfferNotFoundException.class,
+                () -> offerService.updateOffer(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Offer not found with id: 1", exception.getMessage());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(offerRepository, never()).save(any(Offer.class));
+        verifyNoInteractions(tagRepository, offerMapper);
+    }
 }
