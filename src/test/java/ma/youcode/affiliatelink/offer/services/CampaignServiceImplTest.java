@@ -352,4 +352,20 @@ public class CampaignServiceImplTest {
         verify(campaignRepository).findByOfferAdvertiserIdAndStatus(1L, CampaignStatus.ACTIVE);
         verify(campaignRepository, never()).save(any(Campaign.class));
     }
+
+    @Test
+    void pauseActiveCampaignsOfAdvertiser_shouldDoNothing_whenNoActiveCampaigns() {
+
+        // Arrange
+        when(campaignRepository.findByOfferAdvertiserIdAndStatus(1L, CampaignStatus.ACTIVE))
+                .thenReturn(List.of());
+
+        // Act
+        assertDoesNotThrow(() -> campaignService.pauseActiveCampaignsOfAdvertiser(1L));
+
+        // Verify
+        verify(campaignRepository).findByOfferAdvertiserIdAndStatus(1L, CampaignStatus.ACTIVE);
+        verify(campaignRepository, never()).save(any(Campaign.class));
+        verifyNoInteractions(offerRepository, campaignMapper, profileApi);
+    }
 }
