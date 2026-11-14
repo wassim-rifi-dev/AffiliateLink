@@ -442,4 +442,40 @@ public class CampaignServiceImplTest {
         verify(campaignRepository, never()).findAll(any(Pageable.class));
         verify(campaignMapper).toResponseDTO(campaign);
     }
+
+    @Test
+    void createCampaign_shouldAttachCampaignToOffer() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Test Offer", "Test description", "https://test.com", Niche.TECH);
+
+        CreateCampaignRequestDTO requestDTO = new CreateCampaignRequestDTO(
+                "Test Campaign",
+                LocalDate.now(),
+                LocalDate.now().plusDays(30),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(true);
+        when(campaignRepository.save(any(Campaign.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        campaignService.createCampaign(1L, requestDTO);
+
+        // Assert
+        ArgumentCaptor<Campaign> campaignCaptor = ArgumentCaptor.forClass(Campaign.class);
+        verify(campaignRepository).save(campaignCaptor.capture());
+        Campaign savedCampaign = campaignCaptor.getValue();
+
+        assertSame(offer, savedCampaign.getOffer());
+        assertEquals(1, offer.getCampaigns().size());
+        assertSame(savedCampaign, offer.getCampaigns().get(0));
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(profileApi).isActiveAdvertiser(1L);
+    }
 }
