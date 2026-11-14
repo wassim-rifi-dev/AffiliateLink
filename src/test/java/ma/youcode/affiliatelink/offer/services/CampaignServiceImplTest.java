@@ -127,4 +127,34 @@ public class CampaignServiceImplTest {
         verify(profileApi).isActiveAdvertiser(1L);
         verify(campaignMapper).toResponseDTO(savedCampaign);
     }
+
+    @Test
+    void createCampaign_shouldThrow_whenOfferNotFound() {
+
+        // Arrange
+        CreateCampaignRequestDTO requestDTO = new CreateCampaignRequestDTO(
+                "Test Campaign",
+                LocalDate.now(),
+                LocalDate.now().plusDays(30),
+                BigDecimal.valueOf(1000),
+                PayoutModel.CPC,
+                BigDecimal.valueOf(2)
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        OfferNotFoundException exception = assertThrows(
+                OfferNotFoundException.class,
+                () -> campaignService.createCampaign(1L, requestDTO)
+        );
+
+        // Assert
+        assertNotNull(exception);
+        assertEquals("Offer not found with id: 1", exception.getMessage());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verifyNoInteractions(profileApi, campaignRepository, campaignMapper);
+    }
 }
