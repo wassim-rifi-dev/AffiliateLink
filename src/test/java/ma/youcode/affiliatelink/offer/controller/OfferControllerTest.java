@@ -125,4 +125,39 @@ public class OfferControllerTest {
         // Verify
         verifyNoInteractions(offerService, campaignService);
     }
+
+    @Test
+    void searchOffers_shouldPassCriteriaToService() throws Exception {
+
+        // Arrange
+        OfferSearchCriteria expectedCriteria = new OfferSearchCriteria(Niche.TECH, 1L, "java", "spring");
+
+        OfferResponseDTO responseDTO = OfferResponseDTO.builder()
+                .id(1L)
+                .advertiserId(1L)
+                .title("Spring Offer")
+                .niche(Niche.TECH)
+                .build();
+
+        when(offerService.searchOffers(eq(expectedCriteria), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(responseDTO)));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/offers")
+                        .param("niche", "TECH")
+                        .param("advertiserId", "1")
+                        .param("tag", "java")
+                        .param("keyword", "spring"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Spring Offer"))
+                .andExpect(jsonPath("$.page.totalElements").value(1));
+
+        // Verify
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(offerService).searchOffers(eq(expectedCriteria), pageableCaptor.capture());
+
+        Pageable pageable = pageableCaptor.getValue();
+        assertEquals(Sort.Direction.DESC, pageable.getSort().getOrderFor("createdAt").getDirection());
+    }
 }
