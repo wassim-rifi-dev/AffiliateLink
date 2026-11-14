@@ -540,4 +540,40 @@ public class OfferServiceImplTest {
         verify(offerRepository).save(offer);
         verifyNoInteractions(tagRepository);
     }
+
+    @Test
+    void updateOffer_shouldReuseExistingTagsAndCreateMissingOnes() {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Old Offer", "Old description", "https://old.com", Niche.TECH);
+        offer.replaceTags(Set.of(new Tag("old")));
+
+        UpdateOfferRequestDTO requestDTO = new UpdateOfferRequestDTO(
+                "New Offer",
+                "New description",
+                "https://new.com",
+                Niche.GAMING,
+                Set.of(" Java ", "Spring")
+        );
+
+        Tag existingTag = new Tag("java");
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(tagRepository.findByNameIn(Set.of("java", "spring"))).thenReturn(List.of(existingTag));
+        when(tagRepository.save(any(Tag.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(offerRepository.save(offer)).thenReturn(offer);
+
+        // Act
+        offerService.updateOffer(1L, requestDTO);
+
+        // Assert
+        assertEquals(Set.of("java", "spring"), tagNames(offer));
+        assertTrue(offer.getTags().stream().anyMatch(tag -> tag == existingTag));
+
+        // Verify
+        verify(tagRepository).findByNameIn(Set.of("java", "spring"));
+        verify(tagRepository, times(1)).save(any(Tag.class));
+        verify(tagRepository).save(argThat(tag -> tag.getName().equals("spring")));
+        verify(offerRepository).save(offer);
+    }
 }
