@@ -261,4 +261,56 @@ public class OfferControllerTest {
         // Verify
         verify(offerService).updateOffer(1L, expectedDTO);
     }
+
+    @Test
+    void createCampaign_shouldReturn201WithCampaignLocation() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "name": "Test Campaign",
+                  "startDate": "2027-01-01",
+                  "endDate": "2027-02-01",
+                  "budget": 1000,
+                  "payoutModel": "CPC",
+                  "payoutValue": 2
+                }
+                """;
+
+        CampaignResponseDTO responseDTO = CampaignResponseDTO.builder()
+                .id(5L)
+                .offerId(1L)
+                .name("Test Campaign")
+                .startDate(LocalDate.of(2027, 1, 1))
+                .endDate(LocalDate.of(2027, 2, 1))
+                .budget(BigDecimal.valueOf(1000))
+                .payoutModel(PayoutModel.CPC)
+                .payoutValue(BigDecimal.valueOf(2))
+                .status(CampaignStatus.DRAFT)
+                .build();
+
+        when(campaignService.createCampaign(eq(1L), any(CreateCampaignRequestDTO.class))).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/offers/1/campaigns")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/campaigns/5"))
+                .andExpect(jsonPath("$.id").value(5))
+                .andExpect(jsonPath("$.offerId").value(1))
+                .andExpect(jsonPath("$.status").value("DRAFT"));
+
+        // Verify
+        ArgumentCaptor<CreateCampaignRequestDTO> dtoCaptor = ArgumentCaptor.forClass(CreateCampaignRequestDTO.class);
+        verify(campaignService).createCampaign(eq(1L), dtoCaptor.capture());
+
+        CreateCampaignRequestDTO sentDTO = dtoCaptor.getValue();
+        assertEquals("Test Campaign", sentDTO.name());
+        assertEquals(LocalDate.of(2027, 1, 1), sentDTO.startDate());
+        assertEquals(LocalDate.of(2027, 2, 1), sentDTO.endDate());
+        assertEquals(0, BigDecimal.valueOf(1000).compareTo(sentDTO.budget()));
+        assertEquals(PayoutModel.CPC, sentDTO.payoutModel());
+        assertEquals(0, BigDecimal.valueOf(2).compareTo(sentDTO.payoutValue()));
+    }
 }
