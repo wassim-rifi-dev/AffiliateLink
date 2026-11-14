@@ -229,4 +229,35 @@ public class OfferServiceImplTest {
         verify(tagRepository, times(1)).save(any(Tag.class));
         verify(tagRepository).save(argThat(tag -> tag.getName().equals("spring")));
     }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void createOffer_shouldHaveNoTags_whenTagsAreNullOrEmpty(Set<String> tags) {
+
+        // Arrange
+        CreateOfferRequestDTO requestDTO = new CreateOfferRequestDTO(
+                1L,
+                "Test Offer",
+                "Test description",
+                "https://test.com",
+                Niche.TECH,
+                tags
+        );
+
+        when(profileApi.advertiserExists(1L)).thenReturn(true);
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(true);
+        when(offerRepository.save(any(Offer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        offerService.createOffer(requestDTO);
+
+        // Assert
+        ArgumentCaptor<Offer> offerCaptor = ArgumentCaptor.forClass(Offer.class);
+        verify(offerRepository).save(offerCaptor.capture());
+
+        assertTrue(offerCaptor.getValue().getTags().isEmpty());
+
+        // Verify
+        verifyNoInteractions(tagRepository);
+    }
 }
