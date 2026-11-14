@@ -509,4 +509,35 @@ public class OfferServiceImplTest {
             verify(offerMapper).toResponseDTO(offer2);
         }
     }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void updateOffer_shouldClearTags_whenTagsAreNullOrEmpty(Set<String> tags) {
+
+        // Arrange
+        Offer offer = new Offer(1L, "Old Offer", "Old description", "https://old.com", Niche.TECH);
+        offer.replaceTags(Set.of(new Tag("old")));
+
+        UpdateOfferRequestDTO requestDTO = new UpdateOfferRequestDTO(
+                "New Offer",
+                "New description",
+                "https://new.com",
+                Niche.GAMING,
+                tags
+        );
+
+        when(offerRepository.findById(1L)).thenReturn(Optional.of(offer));
+        when(offerRepository.save(offer)).thenReturn(offer);
+
+        // Act
+        offerService.updateOffer(1L, requestDTO);
+
+        // Assert
+        assertTrue(offer.getTags().isEmpty());
+
+        // Verify
+        verify(offerRepository).findById(1L);
+        verify(offerRepository).save(offer);
+        verifyNoInteractions(tagRepository);
+    }
 }
