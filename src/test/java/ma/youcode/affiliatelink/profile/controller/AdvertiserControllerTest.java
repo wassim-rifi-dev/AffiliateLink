@@ -150,4 +150,28 @@ public class AdvertiserControllerTest {
         // Verify
         verify(advertiserService).getAllAdvertisers();
     }
+
+    @Test
+    void getAdvertiserById_shouldReturn200() throws Exception {
+
+        // Arrange
+        AdvertiserResponseDTO responseDTO = AdvertiserResponseDTO.builder()
+                .id(1L)
+                .email("test@email.com")
+                .status(ProfileStatus.ACTIVE)
+                .companyName("Test Company")
+                .build();
+
+        when(advertiserService.getAdvertiserById(1L)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("test@email.com"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+
+        // Verify
+        verify(advertiserService).getAdvertiserById(1L);
+    }
 }
