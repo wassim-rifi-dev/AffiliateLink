@@ -101,4 +101,25 @@ public class CampaignControllerTest {
         // Verify
         verify(campaignService).getCampaigns(eq(CampaignStatus.ACTIVE), any(Pageable.class));
     }
+
+    @Test
+    void updateStatus_shouldReturn204() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "status": "ACTIVE"
+                }
+                """;
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/campaigns/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNoContent())
+                .andExpect(content().string(""));
+
+        // Verify
+        verify(campaignService).updateStatus(1L, new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE));
+    }
 }
