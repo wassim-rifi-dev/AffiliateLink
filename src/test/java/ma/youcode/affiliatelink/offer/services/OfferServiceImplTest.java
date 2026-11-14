@@ -576,4 +576,37 @@ public class OfferServiceImplTest {
         verify(tagRepository).save(argThat(tag -> tag.getName().equals("spring")));
         verify(offerRepository).save(offer);
     }
+
+    @Test
+    void createOffer_shouldNormalizeTagNames_beforeLookup() {
+
+        // Arrange
+        CreateOfferRequestDTO requestDTO = new CreateOfferRequestDTO(
+                1L,
+                "Test Offer",
+                "Test description",
+                "https://test.com",
+                Niche.TECH,
+                Set.of("  Java ", "JAVA", "Spring Boot")
+        );
+
+        when(profileApi.advertiserExists(1L)).thenReturn(true);
+        when(profileApi.isActiveAdvertiser(1L)).thenReturn(true);
+        when(tagRepository.findByNameIn(Set.of("java", "spring boot")))
+                .thenReturn(List.of(new Tag("java"), new Tag("spring boot")));
+        when(offerRepository.save(any(Offer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        offerService.createOffer(requestDTO);
+
+        // Assert
+        ArgumentCaptor<Offer> offerCaptor = ArgumentCaptor.forClass(Offer.class);
+        verify(offerRepository).save(offerCaptor.capture());
+
+        assertEquals(Set.of("java", "spring boot"), tagNames(offerCaptor.getValue()));
+
+        // Verify
+        verify(tagRepository).findByNameIn(Set.of("java", "spring boot"));
+        verify(tagRepository, never()).save(any(Tag.class));
+    }
 }
