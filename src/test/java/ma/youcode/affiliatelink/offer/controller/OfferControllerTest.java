@@ -313,4 +313,34 @@ public class OfferControllerTest {
         assertEquals(PayoutModel.CPC, sentDTO.payoutModel());
         assertEquals(0, BigDecimal.valueOf(2).compareTo(sentDTO.payoutValue()));
     }
+
+    @Test
+    void createCampaign_shouldReturn409_whenAdvertiserNotActive() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "name": "Test Campaign",
+                  "startDate": "2027-01-01",
+                  "endDate": "2027-02-01",
+                  "budget": 1000,
+                  "payoutModel": "CPC",
+                  "payoutValue": 2
+                }
+                """;
+
+        when(campaignService.createCampaign(eq(1L), any(CreateCampaignRequestDTO.class)))
+                .thenThrow(new BusinessRuleException("Advertiser owning the offer must be active to create a campaign"));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/offers/1/campaigns")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Business rule violation"))
+                .andExpect(jsonPath("$.detail").value("Advertiser owning the offer must be active to create a campaign"));
+
+        // Verify
+        verify(campaignService).createCampaign(eq(1L), any(CreateCampaignRequestDTO.class));
+    }
 }
