@@ -473,4 +473,40 @@ public class OfferServiceImplTest {
             verifyNoInteractions(offerMapper);
         }
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void searchOffers_shouldReturnAll_whenCriteriaAreEmpty() {
+
+        // Arrange
+        OfferSearchCriteria criteria = new OfferSearchCriteria(null, null, null, null);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Offer offer1 = new Offer(1L, "Offer 1", "Description 1", "https://test1.com", Niche.TECH);
+        Offer offer2 = new Offer(2L, "Offer 2", "Description 2", "https://test2.com", Niche.GAMING);
+
+        OfferResponseDTO responseDTO1 = OfferResponseDTO.builder().id(1L).title("Offer 1").build();
+        OfferResponseDTO responseDTO2 = OfferResponseDTO.builder().id(2L).title("Offer 2").build();
+
+        try (MockedStatic<OfferSpecifications> specifications = mockStatic(OfferSpecifications.class)) {
+            when(offerRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(new PageImpl<>(List.of(offer1, offer2), pageable, 2));
+            when(offerMapper.toResponseDTO(offer1)).thenReturn(responseDTO1);
+            when(offerMapper.toResponseDTO(offer2)).thenReturn(responseDTO2);
+
+            // Act
+            Page<OfferResponseDTO> result = offerService.searchOffers(criteria, pageable);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(2, result.getTotalElements());
+            assertEquals(List.of(responseDTO1, responseDTO2), result.getContent());
+
+            // Verify
+            specifications.verifyNoInteractions();
+            verify(offerRepository).findAll(any(Specification.class), eq(pageable));
+            verify(offerMapper).toResponseDTO(offer1);
+            verify(offerMapper).toResponseDTO(offer2);
+        }
+    }
 }
