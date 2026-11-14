@@ -122,4 +122,31 @@ public class CampaignControllerTest {
         // Verify
         verify(campaignService).updateStatus(1L, new UpdateCampaignStatusRequestDTO(CampaignStatus.ACTIVE));
     }
+
+    @Test
+    void updateStatus_shouldReturn409_whenTransitionIsInvalid() throws Exception {
+
+        // Arrange
+        String requestBody = """
+                {
+                  "status": "PAUSED"
+                }
+                """;
+
+        UpdateCampaignStatusRequestDTO requestDTO = new UpdateCampaignStatusRequestDTO(CampaignStatus.PAUSED);
+
+        doThrow(new InvalidStatusTransitionException("Invalid status transition: DRAFT -> PAUSED"))
+                .when(campaignService).updateStatus(1L, requestDTO);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/campaigns/1/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Invalid status transition"))
+                .andExpect(jsonPath("$.detail").value("Invalid status transition: DRAFT -> PAUSED"));
+
+        // Verify
+        verify(campaignService).updateStatus(1L, requestDTO);
+    }
 }
