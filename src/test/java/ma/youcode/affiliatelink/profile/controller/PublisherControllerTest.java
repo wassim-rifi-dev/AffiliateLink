@@ -183,4 +183,21 @@ public class PublisherControllerTest {
         // Verify
         verify(publisherService).getPublisherById(1L);
     }
+
+    @Test
+    void getPublisherById_shouldReturn404_whenNotFound() throws Exception {
+
+        // Arrange
+        when(publisherService.getPublisherById(1L))
+                .thenThrow(new ProfileNotExistException("Publisher not found with id: 1"));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"))
+                .andExpect(jsonPath("$.detail").value("Publisher not found with id: 1"));
+
+        // Verify
+        verify(publisherService).getPublisherById(1L);
+    }
 }
