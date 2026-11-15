@@ -63,4 +63,17 @@ public class PublisherRepositoryIT {
         assertEquals("Tech publisher", result.getBio());
         assertEquals("Morocco", result.getCountry());
     }
+
+    @Test
+    void save_shouldSetDefaultStatusPending_whenStatusNotProvided() {
+
+        // Arrange
+        Publisher publisher = buildPublisher("test@email.com");
+
+        // Act
+        Publisher result = publisherRepository.saveAndFlush(publisher);
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, result.getStatus());
+    }
 }
