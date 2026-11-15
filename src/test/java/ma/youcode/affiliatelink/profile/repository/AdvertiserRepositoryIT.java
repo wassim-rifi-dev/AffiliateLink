@@ -122,4 +122,14 @@ public class AdvertiserRepositoryIT {
         // Assert
         assertTrue(result);
     }
+
+    @Test
+    void existsByEmail_shouldReturnFalse_whenEmailNotExists() {
+
+        // Act
+        boolean result = advertiserRepository.existsByEmail("unknown@email.com");
+
+        // Assert
+        assertFalse(result);
+    }
 }
