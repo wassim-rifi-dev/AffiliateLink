@@ -88,4 +88,14 @@ public class ProfileRepositoryIT {
         assertEquals("publisher@email.com", result.get().getEmail());
         assertEquals("John Doe", ((Publisher) result.get()).getUserFullName());
     }
+
+    @Test
+    void findById_shouldReturnEmpty_whenNotExists() {
+
+        // Act
+        Optional<Profile> result = profileRepository.findById(999L);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 }
