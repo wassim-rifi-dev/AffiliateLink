@@ -114,4 +114,14 @@ public class PublisherRepositoryIT {
         // Assert
         assertTrue(result);
     }
+
+    @Test
+    void existsByEmail_shouldReturnFalse_whenEmailNotExists() {
+
+        // Act
+        boolean result = publisherRepository.existsByEmail("unknown@email.com");
+
+        // Assert
+        assertFalse(result);
+    }
 }
