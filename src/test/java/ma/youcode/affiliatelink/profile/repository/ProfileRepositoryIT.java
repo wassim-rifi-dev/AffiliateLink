@@ -114,4 +114,16 @@ public class ProfileRepositoryIT {
         assertEquals(1, result.stream().filter(Advertiser.class::isInstance).count());
         assertEquals(1, result.stream().filter(Publisher.class::isInstance).count());
     }
+
+    @Test
+    void save_shouldThrow_whenEmailUsedByAnotherProfileType() {
+
+        // Arrange
+        advertiserRepository.saveAndFlush(buildAdvertiser("test@email.com"));
+        Publisher duplicate = buildPublisher("test@email.com");
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> publisherRepository.saveAndFlush(duplicate));
+    }
 }
