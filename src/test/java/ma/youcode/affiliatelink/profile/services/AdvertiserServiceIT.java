@@ -162,4 +162,14 @@ public class AdvertiserServiceIT {
         // Assert
         assertTrue(result);
     }
+
+    @Test
+    void advertiserExists_shouldReturnFalse_whenNotExists() {
+
+        // Act
+        boolean result = advertiserService.advertiserExists(999L);
+
+        // Assert
+        assertFalse(result);
+    }
 }
