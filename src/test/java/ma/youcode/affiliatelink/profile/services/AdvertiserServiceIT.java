@@ -115,4 +115,15 @@ public class AdvertiserServiceIT {
         assertTrue(result.stream().anyMatch(a -> a.email().equals("first@email.com")));
         assertTrue(result.stream().anyMatch(a -> a.email().equals("second@email.com")));
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturnEmptyList_whenNoAdvertisers() {
+
+        // Act
+        List<AdvertiserResponseDTO> result = advertiserService.getAllAdvertisers();
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
 }
