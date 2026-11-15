@@ -97,4 +97,16 @@ public class AdvertiserRepositoryIT {
         assertThrows(DataIntegrityViolationException.class,
                 () -> advertiserRepository.saveAndFlush(duplicate));
     }
+
+    @Test
+    void save_shouldThrow_whenCompanyNameAlreadyExists() {
+
+        // Arrange
+        advertiserRepository.saveAndFlush(buildAdvertiser("test@email.com", "Test Company"));
+        Advertiser duplicate = buildAdvertiser("other@email.com", "Test Company");
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> advertiserRepository.saveAndFlush(duplicate));
+    }
 }
