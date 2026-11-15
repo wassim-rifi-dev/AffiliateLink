@@ -72,4 +72,17 @@ public class AdvertiserRepositoryIT {
         // Assert
         assertEquals(ProfileStatus.PENDING, result.getStatus());
     }
+
+    @Test
+    void save_shouldSetCreatedAt_whenPersisted() {
+
+        // Arrange
+        Advertiser advertiser = buildAdvertiser("test@email.com", "Test Company");
+
+        // Act
+        Advertiser result = advertiserRepository.saveAndFlush(advertiser);
+
+        // Assert
+        assertNotNull(result.getCreatedAt());
+    }
 }
