@@ -101,4 +101,17 @@ public class PublisherRepositoryIT {
         assertThrows(DataIntegrityViolationException.class,
                 () -> publisherRepository.saveAndFlush(duplicate));
     }
+
+    @Test
+    void existsByEmail_shouldReturnTrue_whenEmailExists() {
+
+        // Arrange
+        publisherRepository.saveAndFlush(buildPublisher("test@email.com"));
+
+        // Act
+        boolean result = publisherRepository.existsByEmail("test@email.com");
+
+        // Assert
+        assertTrue(result);
+    }
 }
