@@ -132,4 +132,20 @@ public class AdvertiserRepositoryIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void findById_shouldReturnAdvertiser_whenExists() {
+
+        // Arrange
+        Advertiser saved = advertiserRepository.saveAndFlush(buildAdvertiser("test@email.com", "Test Company"));
+
+        // Act
+        Optional<Advertiser> result = advertiserRepository.findById(saved.getId());
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(saved.getId(), result.get().getId());
+        assertEquals("test@email.com", result.get().getEmail());
+        assertEquals("Test Company", result.get().getCompanyName());
+    }
 }
