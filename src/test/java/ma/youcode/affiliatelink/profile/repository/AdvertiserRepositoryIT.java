@@ -109,4 +109,17 @@ public class AdvertiserRepositoryIT {
         assertThrows(DataIntegrityViolationException.class,
                 () -> advertiserRepository.saveAndFlush(duplicate));
     }
+
+    @Test
+    void existsByEmail_shouldReturnTrue_whenEmailExists() {
+
+        // Arrange
+        advertiserRepository.saveAndFlush(buildAdvertiser("test@email.com", "Test Company"));
+
+        // Act
+        boolean result = advertiserRepository.existsByEmail("test@email.com");
+
+        // Assert
+        assertTrue(result);
+    }
 }
