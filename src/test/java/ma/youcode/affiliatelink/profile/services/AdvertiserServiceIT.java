@@ -74,4 +74,17 @@ public class AdvertiserServiceIT {
         assertEquals("https://test.com", result.website());
         assertTrue(advertiserRepository.existsById(result.id()));
     }
+
+    @Test
+    void createAdvertiser_shouldReturnStatusPending() {
+
+        // Arrange
+        CreateAdvertiserRequestDTO requestDTO = buildRequest("test@email.com", "Test Company");
+
+        // Act
+        AdvertiserResponseDTO result = advertiserService.createAdvertiser(requestDTO);
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, result.status());
+    }
 }
