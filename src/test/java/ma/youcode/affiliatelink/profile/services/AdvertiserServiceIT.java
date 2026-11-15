@@ -99,4 +99,20 @@ public class AdvertiserServiceIT {
         assertThrows(EmailAlreadyExistsException.class,
                 () -> advertiserService.createAdvertiser(requestDTO));
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturnAllAdvertisers() {
+
+        // Arrange
+        saveAdvertiser("first@email.com", "First Company", ProfileStatus.PENDING);
+        saveAdvertiser("second@email.com", "Second Company", ProfileStatus.ACTIVE);
+
+        // Act
+        List<AdvertiserResponseDTO> result = advertiserService.getAllAdvertisers();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(a -> a.email().equals("first@email.com")));
+        assertTrue(result.stream().anyMatch(a -> a.email().equals("second@email.com")));
+    }
 }
