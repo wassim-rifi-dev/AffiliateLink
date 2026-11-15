@@ -89,4 +89,16 @@ public class PublisherRepositoryIT {
         // Assert
         assertNotNull(result.getCreatedAt());
     }
+
+    @Test
+    void save_shouldThrow_whenEmailAlreadyExists() {
+
+        // Arrange
+        publisherRepository.saveAndFlush(buildPublisher("test@email.com"));
+        Publisher duplicate = buildPublisher("test@email.com");
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> publisherRepository.saveAndFlush(duplicate));
+    }
 }
