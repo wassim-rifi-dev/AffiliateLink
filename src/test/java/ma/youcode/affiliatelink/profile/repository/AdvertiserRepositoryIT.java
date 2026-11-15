@@ -148,4 +148,14 @@ public class AdvertiserRepositoryIT {
         assertEquals("test@email.com", result.get().getEmail());
         assertEquals("Test Company", result.get().getCompanyName());
     }
+
+    @Test
+    void findById_shouldReturnEmpty_whenNotExists() {
+
+        // Act
+        Optional<Advertiser> result = advertiserRepository.findById(999L);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 }
