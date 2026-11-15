@@ -72,4 +72,20 @@ public class ProfileRepositoryIT {
         assertEquals("advertiser@email.com", result.get().getEmail());
         assertEquals("Test Company", ((Advertiser) result.get()).getCompanyName());
     }
+
+    @Test
+    void findById_shouldReturnPublisherInstance_whenProfileIsPublisher() {
+
+        // Arrange
+        Publisher saved = publisherRepository.saveAndFlush(buildPublisher("publisher@email.com"));
+
+        // Act
+        Optional<Profile> result = profileRepository.findById(saved.getId());
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertInstanceOf(Publisher.class, result.get());
+        assertEquals("publisher@email.com", result.get().getEmail());
+        assertEquals("John Doe", ((Publisher) result.get()).getUserFullName());
+    }
 }
