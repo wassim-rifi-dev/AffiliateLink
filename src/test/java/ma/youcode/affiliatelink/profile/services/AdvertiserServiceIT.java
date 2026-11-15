@@ -149,4 +149,17 @@ public class AdvertiserServiceIT {
         assertThrows(ProfileNotExistException.class,
                 () -> advertiserService.getAdvertiserById(999L));
     }
+
+    @Test
+    void advertiserExists_shouldReturnTrue_whenExists() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser("test@email.com", "Test Company", ProfileStatus.PENDING);
+
+        // Act
+        boolean result = advertiserService.advertiserExists(saved.getId());
+
+        // Assert
+        assertTrue(result);
+    }
 }
