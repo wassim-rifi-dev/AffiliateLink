@@ -198,4 +198,17 @@ public class AdvertiserServiceIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenStatusIsSuspended() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser("test@email.com", "Test Company", ProfileStatus.SUSPENDED);
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(saved.getId());
+
+        // Assert
+        assertFalse(result);
+    }
 }
