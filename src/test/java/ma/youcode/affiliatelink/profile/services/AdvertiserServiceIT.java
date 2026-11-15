@@ -211,4 +211,14 @@ public class AdvertiserServiceIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenNotExists() {
+
+        // Act
+        boolean result = advertiserService.isActiveAdvertiser(999L);
+
+        // Assert
+        assertFalse(result);
+    }
 }
