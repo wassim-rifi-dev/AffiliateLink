@@ -126,4 +126,19 @@ public class AdvertiserServiceIT {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void getAdvertiserById_shouldReturnAdvertiser_whenExists() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser("test@email.com", "Test Company", ProfileStatus.PENDING);
+
+        // Act
+        AdvertiserResponseDTO result = advertiserService.getAdvertiserById(saved.getId());
+
+        // Assert
+        assertEquals(saved.getId(), result.id());
+        assertEquals("test@email.com", result.email());
+        assertEquals("Test Company", result.companyName());
+    }
 }
