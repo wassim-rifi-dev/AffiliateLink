@@ -87,4 +87,16 @@ public class AdvertiserServiceIT {
         // Assert
         assertEquals(ProfileStatus.PENDING, result.status());
     }
+
+    @Test
+    void createAdvertiser_shouldThrowEmailAlreadyExistsException_whenEmailExists() {
+
+        // Arrange
+        saveAdvertiser("test@email.com", "Test Company", ProfileStatus.PENDING);
+        CreateAdvertiserRequestDTO requestDTO = buildRequest("test@email.com", "Other Company");
+
+        // Act & Assert
+        assertThrows(EmailAlreadyExistsException.class,
+                () -> advertiserService.createAdvertiser(requestDTO));
+    }
 }
