@@ -141,4 +141,12 @@ public class AdvertiserServiceIT {
         assertEquals("test@email.com", result.email());
         assertEquals("Test Company", result.companyName());
     }
+
+    @Test
+    void getAdvertiserById_shouldThrowProfileNotExistException_whenNotFound() {
+
+        // Act & Assert
+        assertThrows(ProfileNotExistException.class,
+                () -> advertiserService.getAdvertiserById(999L));
+    }
 }
