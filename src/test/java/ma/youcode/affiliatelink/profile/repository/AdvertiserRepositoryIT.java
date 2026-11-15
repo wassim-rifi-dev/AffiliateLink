@@ -59,4 +59,17 @@ public class AdvertiserRepositoryIT {
         assertEquals("Technology", result.getSector());
         assertEquals("https://test.com", result.getWebsite());
     }
+
+    @Test
+    void save_shouldSetDefaultStatusPending_whenStatusNotProvided() {
+
+        // Arrange
+        Advertiser advertiser = buildAdvertiser("test@email.com", "Test Company");
+
+        // Act
+        Advertiser result = advertiserRepository.saveAndFlush(advertiser);
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, result.getStatus());
+    }
 }
