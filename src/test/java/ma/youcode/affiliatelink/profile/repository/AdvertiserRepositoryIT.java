@@ -158,4 +158,27 @@ public class AdvertiserRepositoryIT {
         // Assert
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void findAll_shouldReturnOnlyAdvertisers() {
+
+        // Arrange
+        advertiserRepository.saveAndFlush(buildAdvertiser("advertiser@email.com", "Test Company"));
+
+        publisherRepository.saveAndFlush(Publisher.builder()
+                .email("publisher@email.com")
+                .firstName("John")
+                .lastName("Doe")
+                .niche(Niche.TECH)
+                .bio("Tech publisher")
+                .country("Morocco")
+                .build());
+
+        // Act
+        List<Advertiser> result = advertiserRepository.findAll();
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("advertiser@email.com", result.get(0).getEmail());
+    }
 }
