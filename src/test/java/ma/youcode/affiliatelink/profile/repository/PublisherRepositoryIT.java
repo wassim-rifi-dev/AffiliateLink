@@ -76,4 +76,17 @@ public class PublisherRepositoryIT {
         // Assert
         assertEquals(ProfileStatus.PENDING, result.getStatus());
     }
+
+    @Test
+    void save_shouldSetCreatedAt_whenPersisted() {
+
+        // Arrange
+        Publisher publisher = buildPublisher("test@email.com");
+
+        // Act
+        Publisher result = publisherRepository.saveAndFlush(publisher);
+
+        // Assert
+        assertNotNull(result.getCreatedAt());
+    }
 }
