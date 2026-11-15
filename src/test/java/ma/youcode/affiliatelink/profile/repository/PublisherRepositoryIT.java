@@ -124,4 +124,20 @@ public class PublisherRepositoryIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void findById_shouldReturnPublisher_whenExists() {
+
+        // Arrange
+        Publisher saved = publisherRepository.saveAndFlush(buildPublisher("test@email.com"));
+
+        // Act
+        Optional<Publisher> result = publisherRepository.findById(saved.getId());
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(saved.getId(), result.get().getId());
+        assertEquals("test@email.com", result.get().getEmail());
+        assertEquals("John Doe", result.get().getUserFullName());
+    }
 }
