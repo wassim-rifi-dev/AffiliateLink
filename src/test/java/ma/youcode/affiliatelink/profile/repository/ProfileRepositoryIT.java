@@ -98,4 +98,20 @@ public class ProfileRepositoryIT {
         // Assert
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void findAll_shouldReturnAdvertisersAndPublishers() {
+
+        // Arrange
+        advertiserRepository.saveAndFlush(buildAdvertiser("advertiser@email.com"));
+        publisherRepository.saveAndFlush(buildPublisher("publisher@email.com"));
+
+        // Act
+        List<Profile> result = profileRepository.findAll();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals(1, result.stream().filter(Advertiser.class::isInstance).count());
+        assertEquals(1, result.stream().filter(Publisher.class::isInstance).count());
+    }
 }
