@@ -1,0 +1,77 @@
+package ma.youcode.affiliatelink.profile.services;
+
+import ma.youcode.affiliatelink.common.exception.EmailAlreadyExistsException;
+import ma.youcode.affiliatelink.common.exception.ProfileNotExistException;
+import ma.youcode.affiliatelink.profile.dto.request.CreateAdvertiserRequestDTO;
+import ma.youcode.affiliatelink.profile.dto.response.AdvertiserResponseDTO;
+import ma.youcode.affiliatelink.profile.model.entity.Advertiser;
+import ma.youcode.affiliatelink.profile.model.enums.ProfileStatus;
+import ma.youcode.affiliatelink.profile.repository.AdvertiserRepository;
+import ma.youcode.affiliatelink.profile.service.AdvertiserService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(properties = "spring.docker.compose.enabled=false")
+@Testcontainers
+@Transactional
+public class AdvertiserServiceIT {
+
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:17-alpine");
+
+    @Autowired
+    private AdvertiserService advertiserService;
+
+    @Autowired
+    private AdvertiserRepository advertiserRepository;
+
+    private CreateAdvertiserRequestDTO buildRequest(String email, String companyName) {
+        return new CreateAdvertiserRequestDTO(
+                email,
+                companyName,
+                "Technology",
+                "https://test.com"
+        );
+    }
+
+    private Advertiser saveAdvertiser(String email, String companyName, ProfileStatus status) {
+        return advertiserRepository.saveAndFlush(Advertiser.builder()
+                .email(email)
+                .companyName(companyName)
+                .sector("Technology")
+                .website("https://test.com")
+                .status(status)
+                .build());
+    }
+
+    @Test
+    void createAdvertiser_shouldPersistAndReturnResponse() {
+
+        // Arrange
+        CreateAdvertiserRequestDTO requestDTO = buildRequest("test@email.com", "Test Company");
+
+        // Act
+        AdvertiserResponseDTO result = advertiserService.createAdvertiser(requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.id());
+        assertNotNull(result.createdAt());
+        assertEquals("test@email.com", result.email());
+        assertEquals("Test Company", result.companyName());
+        assertEquals("Technology", result.sector());
+        assertEquals("https://test.com", result.website());
+        assertTrue(advertiserRepository.existsById(result.id()));
+    }
+}
