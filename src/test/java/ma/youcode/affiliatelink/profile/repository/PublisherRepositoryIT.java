@@ -150,4 +150,25 @@ public class PublisherRepositoryIT {
         // Assert
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void findAll_shouldReturnOnlyPublishers() {
+
+        // Arrange
+        publisherRepository.saveAndFlush(buildPublisher("publisher@email.com"));
+
+        advertiserRepository.saveAndFlush(Advertiser.builder()
+                .email("advertiser@email.com")
+                .companyName("Test Company")
+                .sector("Technology")
+                .website("https://test.com")
+                .build());
+
+        // Act
+        List<Publisher> result = publisherRepository.findAll();
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("publisher@email.com", result.get(0).getEmail());
+    }
 }
