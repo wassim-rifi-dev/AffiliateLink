@@ -140,4 +140,14 @@ public class PublisherRepositoryIT {
         assertEquals("test@email.com", result.get().getEmail());
         assertEquals("John Doe", result.get().getUserFullName());
     }
+
+    @Test
+    void findById_shouldReturnEmpty_whenNotExists() {
+
+        // Act
+        Optional<Publisher> result = publisherRepository.findById(999L);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 }
