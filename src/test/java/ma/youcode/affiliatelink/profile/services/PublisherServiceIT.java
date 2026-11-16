@@ -80,4 +80,17 @@ public class PublisherServiceIT {
         assertEquals("Morocco", result.country());
         assertTrue(publisherRepository.existsById(result.id()));
     }
+
+    @Test
+    void createPublisher_shouldReturnStatusPending() {
+
+        // Arrange
+        CreatePublisherRequestDTO requestDTO = buildRequest("test@email.com");
+
+        // Act
+        PublisherResponseDTO result = publisherService.createPublisher(requestDTO);
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, result.status());
+    }
 }
