@@ -237,4 +237,13 @@ public class AdvertiserControllerIT {
                 .andExpect(jsonPath("$.companyName").value("Test Company"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
     }
+
+    @Test
+    void getAdvertiserById_shouldReturn404_whenNotFound() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"));
+    }
 }
