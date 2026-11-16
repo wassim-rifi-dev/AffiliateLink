@@ -188,4 +188,19 @@ public class ProfileServiceIT {
         assertThrows(InvalidStatusTransitionException.class,
                 () -> profileService.updateStatus(saved.getId(), requestDTO));
     }
+
+    @Test
+    void updateStatus_shouldNotChangeStatus_whenTransitionIsInvalid() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.SUSPENDED);
+
+        // Act
+        assertThrows(InvalidStatusTransitionException.class,
+                () -> profileService.updateStatus(saved.getId(), requestDTO));
+
+        // Assert
+        assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
+    }
 }
