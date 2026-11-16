@@ -260,4 +260,13 @@ public class PublisherControllerIT {
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
     }
+
+    @Test
+    void getPublisherById_shouldReturn404_whenNotFound() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers/{id}", 999L))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"));
+    }
 }
