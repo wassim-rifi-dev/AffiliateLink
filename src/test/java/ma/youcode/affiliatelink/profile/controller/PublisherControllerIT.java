@@ -145,4 +145,16 @@ public class PublisherControllerIT {
 
         assertEquals(0, publisherRepository.count());
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenLastNameIsBlank() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("test@email.com", "John", "", "TECH", "Tech publisher", "Morocco")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, publisherRepository.count());
+    }
 }
