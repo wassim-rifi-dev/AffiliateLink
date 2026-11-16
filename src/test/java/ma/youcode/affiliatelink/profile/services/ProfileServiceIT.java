@@ -242,4 +242,17 @@ public class ProfileServiceIT {
         // Assert
         assertEquals(0, applicationEvents.stream(AdvertiserSuspended.class).count());
     }
+
+    @Test
+    void updateStatus_shouldNotPublishEvent_whenPublisherSuspended() {
+
+        // Arrange
+        Publisher saved = savePublisher(ProfileStatus.ACTIVE);
+
+        // Act
+        profileService.updateStatus(saved.getId(), new UpdateProfileStatusRequestDTO(ProfileStatus.SUSPENDED));
+
+        // Assert
+        assertEquals(0, applicationEvents.stream(AdvertiserSuspended.class).count());
+    }
 }
