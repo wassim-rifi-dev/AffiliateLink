@@ -100,4 +100,14 @@ public class ProfileApiIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserNotExists() {
+
+        // Act
+        boolean result = profileApi.isActiveAdvertiser(999L);
+
+        // Assert
+        assertFalse(result);
+    }
 }
