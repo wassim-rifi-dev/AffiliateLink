@@ -93,4 +93,18 @@ public class PublisherControllerIT {
                 .andExpect(jsonPath("$.niche").value("TECH"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
     }
+
+    @Test
+    void createPublisher_shouldPersistPublisherInDatabase() throws Exception {
+
+        // Act
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_REQUEST_BODY))
+                .andExpect(status().isCreated());
+
+        // Assert
+        assertTrue(publisherRepository.existsByEmail("test@email.com"));
+        assertEquals(1, publisherRepository.count());
+    }
 }
