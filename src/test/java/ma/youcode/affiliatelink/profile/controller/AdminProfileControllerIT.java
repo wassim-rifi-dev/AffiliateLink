@@ -172,4 +172,19 @@ public class AdminProfileControllerIT {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Profile not found"));
     }
+
+    @Test
+    void updateStatus_shouldReturn400_whenStatusIsNull() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody(null)))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
+    }
 }
