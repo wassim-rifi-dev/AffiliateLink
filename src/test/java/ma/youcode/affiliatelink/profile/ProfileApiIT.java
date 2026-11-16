@@ -51,4 +51,14 @@ public class ProfileApiIT {
         // Assert
         assertTrue(result);
     }
+
+    @Test
+    void advertiserExists_shouldReturnFalse_whenAdvertiserNotInDatabase() {
+
+        // Act
+        boolean result = profileApi.advertiserExists(999L);
+
+        // Assert
+        assertFalse(result);
+    }
 }
