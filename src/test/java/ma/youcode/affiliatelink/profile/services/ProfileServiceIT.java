@@ -203,4 +203,15 @@ public class ProfileServiceIT {
         // Assert
         assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
     }
+
+    @Test
+    void updateStatus_shouldThrowProfileNotExistException_whenNotFound() {
+
+        // Arrange
+        UpdateProfileStatusRequestDTO requestDTO = new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE);
+
+        // Act & Assert
+        assertThrows(ProfileNotExistException.class,
+                () -> profileService.updateStatus(999L, requestDTO));
+    }
 }
