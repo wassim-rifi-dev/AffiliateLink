@@ -187,4 +187,19 @@ public class AdminProfileControllerIT {
 
         assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
     }
+
+    @Test
+    void updateStatus_shouldReturn400_whenStatusIsUnknown() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("UNKNOWN")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
+    }
 }
