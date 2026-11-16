@@ -229,4 +229,17 @@ public class ProfileServiceIT {
         assertEquals(1, events.size());
         assertEquals(saved.getId(), events.get(0).advertiserId());
     }
+
+    @Test
+    void updateStatus_shouldNotPublishEvent_whenAdvertiserActivated() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act
+        profileService.updateStatus(saved.getId(), new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE));
+
+        // Assert
+        assertEquals(0, applicationEvents.stream(AdvertiserSuspended.class).count());
+    }
 }
