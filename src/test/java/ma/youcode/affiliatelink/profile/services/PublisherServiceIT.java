@@ -93,4 +93,16 @@ public class PublisherServiceIT {
         // Assert
         assertEquals(ProfileStatus.PENDING, result.status());
     }
+
+    @Test
+    void createPublisher_shouldThrowEmailAlreadyExistsException_whenEmailExists() {
+
+        // Arrange
+        savePublisher("test@email.com");
+        CreatePublisherRequestDTO requestDTO = buildRequest("test@email.com");
+
+        // Act & Assert
+        assertThrows(EmailAlreadyExistsException.class,
+                () -> publisherService.createPublisher(requestDTO));
+    }
 }
