@@ -157,4 +157,16 @@ public class PublisherControllerIT {
 
         assertEquals(0, publisherRepository.count());
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenNicheIsNull() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("test@email.com", "John", "Doe", null, "Tech publisher", "Morocco")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, publisherRepository.count());
+    }
 }
