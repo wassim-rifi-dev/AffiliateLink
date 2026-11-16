@@ -186,4 +186,15 @@ public class AdvertiserControllerIT {
 
         assertEquals(0, advertiserRepository.count());
     }
+
+    @Test
+    void createAdvertiser_shouldReturn400_whenBodyIsMissing() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, advertiserRepository.count());
+    }
 }
