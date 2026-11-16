@@ -101,4 +101,18 @@ public class AdminProfileControllerIT {
                 .andExpect(jsonPath("$.email").value("advertiser@email.com"))
                 .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
+
+    @Test
+    void updateStatus_shouldReturn200_whenActiveToSuspended() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.ACTIVE);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("SUSPENDED")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUSPENDED"));
+    }
 }
