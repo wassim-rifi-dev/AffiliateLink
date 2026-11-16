@@ -214,4 +214,19 @@ public class ProfileServiceIT {
         assertThrows(ProfileNotExistException.class,
                 () -> profileService.updateStatus(999L, requestDTO));
     }
+
+    @Test
+    void updateStatus_shouldPublishAdvertiserSuspendedEvent_whenAdvertiserSuspended() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.ACTIVE);
+
+        // Act
+        profileService.updateStatus(saved.getId(), new UpdateProfileStatusRequestDTO(ProfileStatus.SUSPENDED));
+
+        // Assert
+        List<AdvertiserSuspended> events = applicationEvents.stream(AdvertiserSuspended.class).toList();
+        assertEquals(1, events.size());
+        assertEquals(saved.getId(), events.get(0).advertiserId());
+    }
 }
