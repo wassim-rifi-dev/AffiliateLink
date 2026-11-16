@@ -212,4 +212,14 @@ public class AdvertiserControllerIT {
                 .andExpect(jsonPath("$[*].email").value(containsInAnyOrder(
                         "first@email.com", "second@email.com")));
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturn200WithEmptyList_whenNoAdvertisers() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 }
