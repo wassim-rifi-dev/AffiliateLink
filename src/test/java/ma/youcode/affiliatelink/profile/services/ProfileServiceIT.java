@@ -127,4 +127,17 @@ public class ProfileServiceIT {
         // Assert
         assertEquals(ProfileStatus.ACTIVE, result.status());
     }
+
+    @Test
+    void updateStatus_shouldPersistNewStatusInDatabase() {
+
+        // Arrange
+        Publisher saved = savePublisher(ProfileStatus.PENDING);
+
+        // Act
+        profileService.updateStatus(saved.getId(), new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE));
+
+        // Assert
+        assertEquals(ProfileStatus.ACTIVE, reloadStatus(saved.getId()));
+    }
 }
