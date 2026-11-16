@@ -100,4 +100,18 @@ public class AdvertiserControllerIT {
         assertTrue(advertiserRepository.existsByEmail("test@email.com"));
         assertEquals(1, advertiserRepository.count());
     }
+
+    @Test
+    void createAdvertiser_shouldReturn409_whenEmailExists() throws Exception {
+
+        // Arrange
+        saveAdvertiser("test@email.com", "Other Company");
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_REQUEST_BODY))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Email already exists"));
+    }
 }
