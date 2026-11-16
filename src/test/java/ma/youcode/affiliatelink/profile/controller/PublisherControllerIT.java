@@ -219,4 +219,19 @@ public class PublisherControllerIT {
 
         assertEquals(0, publisherRepository.count());
     }
+
+    @Test
+    void getAllPublisher_shouldReturn200WithList() throws Exception {
+
+        // Arrange
+        savePublisher("first@email.com");
+        savePublisher("second@email.com");
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[*].email").value(containsInAnyOrder(
+                        "first@email.com", "second@email.com")));
+    }
 }
