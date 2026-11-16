@@ -161,4 +161,15 @@ public class AdminProfileControllerIT {
 
         assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
     }
+
+    @Test
+    void updateStatus_shouldReturn404_whenProfileNotFound() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", 999L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("ACTIVE")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Profile not found"));
+    }
 }
