@@ -126,4 +126,16 @@ public class AdvertiserControllerIT {
 
         assertEquals(0, advertiserRepository.count());
     }
+
+    @Test
+    void createAdvertiser_shouldReturn400_whenEmailIsInvalid() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("invalid-email", "Test Company", "Technology", "https://test.com")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, advertiserRepository.count());
+    }
 }
