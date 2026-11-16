@@ -2,6 +2,11 @@ spring:
   application:
     name: affiliatelink
 
+  docker:
+    compose:
+      skip:
+        in-tests: false
+
   datasource:
     url: jdbc:postgresql://localhost:5432/affiliatelink_db
     username: affiliate
