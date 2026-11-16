@@ -74,4 +74,17 @@ public class ProfileApiIT {
         // Assert
         assertTrue(result);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserIsPending() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act
+        boolean result = profileApi.isActiveAdvertiser(saved.getId());
+
+        // Assert
+        assertFalse(result);
+    }
 }
