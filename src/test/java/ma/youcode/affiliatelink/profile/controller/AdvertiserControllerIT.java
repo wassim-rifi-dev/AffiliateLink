@@ -114,4 +114,16 @@ public class AdvertiserControllerIT {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title").value("Email already exists"));
     }
+
+    @Test
+    void createAdvertiser_shouldReturn400_whenEmailIsBlank() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("", "Test Company", "Technology", "https://test.com")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, advertiserRepository.count());
+    }
 }
