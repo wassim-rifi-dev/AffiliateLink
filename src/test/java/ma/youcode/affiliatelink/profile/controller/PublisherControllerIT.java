@@ -121,4 +121,16 @@ public class PublisherControllerIT {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title").value("Email already exists"));
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenEmailIsInvalid() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("invalid-email", "John", "Doe", "TECH", "Tech publisher", "Morocco")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, publisherRepository.count());
+    }
 }
