@@ -197,4 +197,19 @@ public class AdvertiserControllerIT {
 
         assertEquals(0, advertiserRepository.count());
     }
+
+    @Test
+    void getAllAdvertisers_shouldReturn200WithList() throws Exception {
+
+        // Arrange
+        saveAdvertiser("first@email.com", "First Company");
+        saveAdvertiser("second@email.com", "Second Company");
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[*].email").value(containsInAnyOrder(
+                        "first@email.com", "second@email.com")));
+    }
 }
