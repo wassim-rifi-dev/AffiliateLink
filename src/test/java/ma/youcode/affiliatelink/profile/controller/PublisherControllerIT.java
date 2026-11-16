@@ -244,4 +244,20 @@ public class PublisherControllerIT {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
     }
+
+    @Test
+    void getPublisherById_shouldReturn200() throws Exception {
+
+        // Arrange
+        Publisher saved = savePublisher("test@email.com");
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers/{id}", saved.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.email").value("test@email.com"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.status").value("PENDING"));
+    }
 }
