@@ -86,4 +86,18 @@ public class AdvertiserControllerIT {
                 .andExpect(jsonPath("$.website").value("https://test.com"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
     }
+
+    @Test
+    void createAdvertiser_shouldPersistAdvertiserInDatabase() throws Exception {
+
+        // Act
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_REQUEST_BODY))
+                .andExpect(status().isCreated());
+
+        // Assert
+        assertTrue(advertiserRepository.existsByEmail("test@email.com"));
+        assertEquals(1, advertiserRepository.count());
+    }
 }
