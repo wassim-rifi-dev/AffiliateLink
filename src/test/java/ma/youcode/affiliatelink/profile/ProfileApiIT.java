@@ -87,4 +87,17 @@ public class ProfileApiIT {
         // Assert
         assertFalse(result);
     }
+
+    @Test
+    void isActiveAdvertiser_shouldReturnFalse_whenAdvertiserIsSuspended() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.SUSPENDED);
+
+        // Act
+        boolean result = profileApi.isActiveAdvertiser(saved.getId());
+
+        // Assert
+        assertFalse(result);
+    }
 }
