@@ -208,4 +208,15 @@ public class PublisherControllerIT {
 
         assertEquals(0, publisherRepository.count());
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenBodyIsMissing() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, publisherRepository.count());
+    }
 }
