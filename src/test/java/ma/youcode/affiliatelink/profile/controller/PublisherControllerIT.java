@@ -234,4 +234,14 @@ public class PublisherControllerIT {
                 .andExpect(jsonPath("$[*].email").value(containsInAnyOrder(
                         "first@email.com", "second@email.com")));
     }
+
+    @Test
+    void getAllPublisher_shouldReturn200WithEmptyList_whenNoPublishers() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(get("/api/publishers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
 }
