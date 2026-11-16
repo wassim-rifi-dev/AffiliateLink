@@ -148,4 +148,12 @@ public class PublisherServiceIT {
         assertEquals("John", result.firstName());
         assertEquals("Doe", result.lastName());
     }
+
+    @Test
+    void getPublisherById_shouldThrowProfileNotExistException_whenNotFound() {
+
+        // Act & Assert
+        assertThrows(ProfileNotExistException.class,
+                () -> publisherService.getPublisherById(999L));
+    }
 }
