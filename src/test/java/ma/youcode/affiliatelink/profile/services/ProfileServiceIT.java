@@ -113,4 +113,18 @@ public class ProfileServiceIT {
         // Assert
         assertEquals(ProfileStatus.SUSPENDED, result.status());
     }
+
+    @Test
+    void updateStatus_shouldChangeSuspendedToActive() {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.SUSPENDED);
+
+        // Act
+        ProfileStatusResponseDTO result = profileService.updateStatus(
+                saved.getId(), new UpdateProfileStatusRequestDTO(ProfileStatus.ACTIVE));
+
+        // Assert
+        assertEquals(ProfileStatus.ACTIVE, result.status());
+    }
 }
