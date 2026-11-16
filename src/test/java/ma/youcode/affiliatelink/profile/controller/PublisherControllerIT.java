@@ -181,4 +181,19 @@ public class PublisherControllerIT {
 
         assertEquals(0, publisherRepository.count());
     }
+
+    @Test
+    void createPublisher_shouldReturn400_whenBioTooLong() throws Exception {
+
+        // Arrange
+        String longBio = "a".repeat(501);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("test@email.com", "John", "Doe", "TECH", longBio, "Morocco")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, publisherRepository.count());
+    }
 }
