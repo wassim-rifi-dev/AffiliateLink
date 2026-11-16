@@ -129,4 +129,20 @@ public class AdminProfileControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
+
+    @Test
+    void updateStatus_shouldPersistNewStatusInDatabase() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("ACTIVE")))
+                .andExpect(status().isOk());
+
+        // Assert
+        assertEquals(ProfileStatus.ACTIVE, reloadStatus(saved.getId()));
+    }
 }
