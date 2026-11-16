@@ -121,4 +121,15 @@ public class PublisherServiceIT {
         assertTrue(result.stream().anyMatch(p -> p.email().equals("first@email.com")));
         assertTrue(result.stream().anyMatch(p -> p.email().equals("second@email.com")));
     }
+
+    @Test
+    void getAllPublisher_shouldReturnEmptyList_whenNoPublishers() {
+
+        // Act
+        List<PublisherResponseDTO> result = publisherService.getAllPublisher();
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
 }
