@@ -202,4 +202,22 @@ public class AdminProfileControllerIT {
 
         assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
     }
+
+    @Test
+    void updateStatus_shouldReturn200_whenProfileIsPublisher() throws Exception {
+
+        // Arrange
+        Publisher saved = savePublisher(ProfileStatus.PENDING);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("ACTIVE")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.email").value("publisher@email.com"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+
+        assertEquals(ProfileStatus.ACTIVE, reloadStatus(saved.getId()));
+    }
 }
