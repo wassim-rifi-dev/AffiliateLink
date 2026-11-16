@@ -132,4 +132,20 @@ public class PublisherServiceIT {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void getPublisherById_shouldReturnPublisher_whenExists() {
+
+        // Arrange
+        Publisher saved = savePublisher("test@email.com");
+
+        // Act
+        PublisherResponseDTO result = publisherService.getPublisherById(saved.getId());
+
+        // Assert
+        assertEquals(saved.getId(), result.id());
+        assertEquals("test@email.com", result.email());
+        assertEquals("John", result.firstName());
+        assertEquals("Doe", result.lastName());
+    }
 }
