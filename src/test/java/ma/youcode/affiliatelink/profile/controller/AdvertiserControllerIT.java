@@ -222,4 +222,19 @@ public class AdvertiserControllerIT {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
     }
+
+    @Test
+    void getAdvertiserById_shouldReturn200() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser("test@email.com", "Test Company");
+
+        // Act & Assert
+        mockMvc.perform(get("/api/advertisers/{id}", saved.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.email").value("test@email.com"))
+                .andExpect(jsonPath("$.companyName").value("Test Company"))
+                .andExpect(jsonPath("$.status").value("PENDING"));
+    }
 }
