@@ -105,4 +105,20 @@ public class PublisherServiceIT {
         assertThrows(EmailAlreadyExistsException.class,
                 () -> publisherService.createPublisher(requestDTO));
     }
+
+    @Test
+    void getAllPublisher_shouldReturnAllPublishers() {
+
+        // Arrange
+        savePublisher("first@email.com");
+        savePublisher("second@email.com");
+
+        // Act
+        List<PublisherResponseDTO> result = publisherService.getAllPublisher();
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(p -> p.email().equals("first@email.com")));
+        assertTrue(result.stream().anyMatch(p -> p.email().equals("second@email.com")));
+    }
 }
