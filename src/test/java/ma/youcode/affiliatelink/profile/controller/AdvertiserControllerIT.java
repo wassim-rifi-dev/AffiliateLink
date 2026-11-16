@@ -162,4 +162,16 @@ public class AdvertiserControllerIT {
 
         assertEquals(0, advertiserRepository.count());
     }
+
+    @Test
+    void createAdvertiser_shouldReturn400_whenSectorIsBlank() throws Exception {
+
+        // Act & Assert
+        mockMvc.perform(post("/api/advertisers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(buildBody("test@email.com", "Test Company", "", "https://test.com")))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, advertiserRepository.count());
+    }
 }
