@@ -107,4 +107,18 @@ public class PublisherControllerIT {
         assertTrue(publisherRepository.existsByEmail("test@email.com"));
         assertEquals(1, publisherRepository.count());
     }
+
+    @Test
+    void createPublisher_shouldReturn409_whenEmailExists() throws Exception {
+
+        // Arrange
+        savePublisher("test@email.com");
+
+        // Act & Assert
+        mockMvc.perform(post("/api/publishers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(VALID_REQUEST_BODY))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Email already exists"));
+    }
 }
