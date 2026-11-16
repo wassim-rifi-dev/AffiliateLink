@@ -145,4 +145,20 @@ public class AdminProfileControllerIT {
         // Assert
         assertEquals(ProfileStatus.ACTIVE, reloadStatus(saved.getId()));
     }
+
+    @Test
+    void updateStatus_shouldReturn409_whenTransitionIsInvalid() throws Exception {
+
+        // Arrange
+        Advertiser saved = saveAdvertiser(ProfileStatus.PENDING);
+
+        // Act & Assert
+        mockMvc.perform(patch("/api/admin/profiles/{id}/status", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(statusBody("SUSPENDED")))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Invalid status transition"));
+
+        assertEquals(ProfileStatus.PENDING, reloadStatus(saved.getId()));
+    }
 }
